@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin Portal 
+{% endblock %}
+
+{% block content %}
+<article>
+    {% for request in requests %}
+    <div><p>{{ request.name }} says: <b><a>{{ request.content }}</a></b></p></div>
+    {% endfor %}
+</article>
+{% endblock %}

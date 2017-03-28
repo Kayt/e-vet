@@ -1,0 +1,14 @@
+{% extends "Base.html" %}
+{% from "form_macros.html" import render_field %}
+
+{% block content %}
+<form action="" method="post" name="add">
+    {{ form.hidden_tag() }}
+    <table>
+        {{ render_field(form.name, size=50) }}
+        {{ render_field(form.symptoms) }}
+        {{ render_field(form.remedy) }}
+        {{ render_field(form.submit) }}
+    </table>
+</form>
+{% endblock %}

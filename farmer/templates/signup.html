@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "form_macros.html" import render_field %}
+
+{% block title %}
+Online Marking -- Signup
+{% endblock %}
+
+{% block content %}
+	<section>
+		<h1 style="clear: both">Create an Account</h1>
+		<form action="{{ url_for('signup') }}" method="post" name="signup">
+			{{ form.hidden_tag() }}
+			<table>
+				{{ render_field(form.username, size=50) }}
+				{{ render_field(form.email, size=50) }}
+				{{ render_field(form.password, size=50) }}
+				{{ render_field(form.password2, size=50) }}
+
+				<tr class="submit">
+					<td></td>
+					<td><button type="submit">Submit</button></td>
+				</tr>
+			</table>
+		</form>
+	</section>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}
