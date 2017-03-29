@@ -11,6 +11,25 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
 
         <script src="{{ url_for('static', filename='js/vendor/modernizr-2.8.3-respond-1.4.2.min.js') }}"></script>
+
+        <style>
+            table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            td, th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
+
+            tr:nth-child(even) {
+                background-color: #dddddd;
+            }
+        </style> 
+        
     </head>
     <body>
         <div class="header-container">
@@ -18,8 +37,8 @@
                 <a href="{{ url_for('index') }}"><h1 class="title">Expert Farming System</h1></a>
                 <nav>
                     <ul>
-                        <li><a href="{{ url_for('add')}}">Add Disease</a></li>
                         {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('viewFarmers')}}">View Farmers</a></li>
                             <li><a href="#">Current Requests</a></li>
                             <li><a href="{{ url_for('logout') }}">Sign Out</a></li>
                         {% else %}

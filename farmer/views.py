@@ -128,3 +128,9 @@ def add():
         flash('Diesease added to database!')
         return redirect(url_for('index'))
     return render_template('addDiesease.html', form=form)
+
+@app.route('/farmers')
+@login_required
+def viewFarmers():
+    farmers = Farmer.query.all()
+    return render_template('farmers.html', farmers=farmers)
