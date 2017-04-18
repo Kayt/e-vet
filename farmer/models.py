@@ -21,7 +21,7 @@ class Question(db.Model):
     def __init__(self, content, number):
         self.content = content
         self.number = number
-        self.farmer = get_farmer(number)
+        self.farmer_id = get_farmer(number)
         self.name = get_farmer_name(number)
 
 
