@@ -16,7 +16,7 @@ from .naiveBayesClassifier.classifier import Classifier
 
 from google.cloud import translate 
 
-translate_client = translate.Client()
+
 
 token = Tokenizer()
 
@@ -286,6 +286,8 @@ for symptom in symptomSet:
 # a classifier.
 symptomClassifier = Classifier(symptomTrainer.data, token)
 
+translate_client = translate.Client()
+
 # Now you have a classifier which can give a try to classifiy text of news whose
 # category is unknown, yet.pyt
 
@@ -302,10 +304,9 @@ def sms_survey():
 
     if body is not None:
         blob = TextBlob(body)
-        text = blob
+        text = body
         target = 'en'
         translation = translate_client.translate(text, target_language=target)
-
         result = translation['translatedText']
 
         if 'register' in result.lower():

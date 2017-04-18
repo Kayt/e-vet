@@ -10,4 +10,7 @@ translation = translate_client.translate(text, target_language=target)
 
 result = translation['translatedText']
 
-print 'translated tp {}'.format(result)
+if 'hello' in result:
+    print 'Yes'
+else:
+    print 'no'
