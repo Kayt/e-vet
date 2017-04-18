@@ -284,4 +284,5 @@ classification = newsClassifier.classify("Chicken biting each other on the head"
 
 # the classification variable holds the detected categories sorted
 for cl in classification:
-    print cl
+    if cl[1] > 0.0001:
+        print cl
