@@ -310,13 +310,13 @@ def sms_survey():
         result = translation['translatedText']
 
         if 'register' in result.lower():
-            new = blob.split(' ')
+            new = result.split(' ')
             farmer = Farmer(number=phone, name=new[1], surname=new[2], location=" ".join(new[3:]))
             db.session.add(farmer)
             db.session.commit()
             response.message('{} you have been added successfully!'.format(farmer.name))
         else:
-            classification = symptomClassifier.classify(body)
+            classification = symptomClassifier.classify(result)
             for cl in classification:
                 if cl[1] > 0.001:
                     response.message(cl[0])
