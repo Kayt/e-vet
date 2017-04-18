@@ -13,7 +13,7 @@ def get_farmer_name(number):
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String, nullable=False)
+    content = db.Column(db.Text, nullable=False)
     number = db.Column(db.String(100))
     name = db.Column(db.String(100))
     farmer_id = db.Column(db.Integer, db.ForeignKey('farmer.id'))
