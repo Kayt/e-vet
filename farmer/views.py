@@ -322,7 +322,7 @@ def sms_survey():
                     response.message(cl[0])
                 else:
                     response.message('Your query has been forwarded to experts you will be texted the results')
-                    ques = Question(content=body)
+                    ques = Question(content=body, number=phone)
                     db.session.add(ques)
                     db.session.commit()
 
