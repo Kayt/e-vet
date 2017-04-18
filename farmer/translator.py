@@ -8,4 +8,6 @@ target = 'en'
 
 translation = translate_client.translate(text, target_language=target)
 
-print translation['translatedText']
+result = translation['translatedText']
+
+print 'translated tp {}'.format(result)
