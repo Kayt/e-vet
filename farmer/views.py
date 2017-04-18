@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, request, session, flash
 from flask_login import login_user, logout_user, current_user, login_required
 
-from . import app, db, login_manager
+from . import app, db, login_manager, basic_auth
 from flask import render_template
 from .models import Question, User, Disease, Farmer
 from .forms import SignupForm, LoginForm, AddDiseaseForm
@@ -14,11 +14,15 @@ from .naiveBayesClassifier.tokenizer import Tokenizer
 from .naiveBayesClassifier.trainer import Trainer
 from .naiveBayesClassifier.classifier import Classifier
 
+from google.cloud import translate 
+
+translate_client = translate.Client()
+
 token = Tokenizer()
 
-newsTrainer = Trainer()
+symptomTrainer = Trainer()
 
-newsSet =[
+symptomSet =[
     { "name":"Calf",  "symptoms":"Diphtheria Lives in soil, litter, & unclean stables& enters the body through small scratches or wounds. Difficulty breathing, eating, and drinking.Patches of yellowish, dead tissue appear on the edges of the tongue, gums, & throat.  Often, a nasal discharge occurs"},
     { "name":"bloat", "symptoms":"Gases of fermentation"},
     { "name":"Grain overload", "symptoms":"Indigestion,collapse,frequently death, temperature too high 41 degrees"},
@@ -34,12 +38,12 @@ newsSet =[
     { "name":"Founder", "symptoms":"Overeating of grain, or lush, highly improved pasture grasses, Affected animals experience pain and may have fever as high as 106 degrees F" },
     { "name":"Tuberculosis", "symptoms":"Lungs are affected.  However, other organs may be affected.  Some animals show no symptoms; others appear unthrifty & have a cough"}
 ]
-for news in newsSet:
-    newsTrainer.train(news['symptoms'], news['name'])
+for symptom in symptomSet:
+    symptomTrainer.train(symptom['symptoms'], symptom['name'])
 
 # When you have sufficient trained data, you are almost done and can start to use
 # a classifier.
-newsClassifier = Classifier(newsTrainer.data, token)
+symptomClassifier = Classifier(symptomTrainer.data, token)
 
 # Now you have a classifier which can give a try to classifiy text of news whose
 # category is unknown, yet.
@@ -57,15 +61,20 @@ def sms_survey():
 
     if body is not None:
         blob = TextBlob(body)
+        text = blob
+        target = 'en'
+        translation = translate_client.translate(text, target_language=target)
 
-        if 'register' in blob.lower():
+        result = translation['translatedText']
+
+        if 'register' in result.lower():
             new = blob.split(' ')
             farmer = Farmer(number=phone, name=new[1], surname=new[2], location=" ".join(new[3:]))
             db.session.add(farmer)
             db.session.commit()
             response.message('{} you have been added successfully!'.format(farmer.name))
         else:
-            classification = newsClassifier.classify(body)
+            classification = symptomClassifier.classify(body)
             for cl in classification:
                 if cl[1] > 0.1:
                     response.message(cl[0])
@@ -119,7 +128,7 @@ def signup():
 
 @app.route('/add', methods=["GET","POST"])
 @login_required
-def add():
+def addDiesease():
     form = AddDiseaseForm()
     if form.validate_on_submit():
         new = Disease(name=form.name.data, symptoms=form.symptoms.data,remedy=form.remedy.data)
@@ -134,3 +143,9 @@ def add():
 def viewFarmers():
     farmers = Farmer.query.all()
     return render_template('farmers.html', farmers=farmers)
+
+@app.route('/admin')
+@basic_auth.required
+def dashboard():
+    users = User.query.all()
+    return render_template('dashboard.html', users=users)

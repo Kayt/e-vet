@@ -7,7 +7,7 @@ Admin Portal
 {% block content %}
 <article>
     {% for request in requests %}
-    <div><p>Farmer Asked: <b><a>{{ request.content }}</a></b></p></div>
+    <div><p>{{ request.name }}: <b><a>{{ request.content }}</a></b></p></div>
     {% endfor %}
 </article>
 {% endblock %}

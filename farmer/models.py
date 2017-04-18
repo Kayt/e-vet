@@ -3,19 +3,33 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from farmer import db
 
+def get_farmer(number):
+    farmer = Farmer.query.filter_by(number=number).first()
+    return farmer.id
+
+def get_farmer_name(number):
+    farmer = Farmer.query.filter_by(number=number).first()
+    return farmer.name
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String, nullable=False)
+    number = db.Column(db.String(100))
+    name = db.Column(db.String(100))
+    farmer_id = db.Column(db.Integer, db.ForeignKey('farmer.id'))
 
-    def __init__(self, content):
+    def __init__(self, content, number):
         self.content = content
+        self.number = number
+        self.farmer = get_farmer(number)
+        self.name = get_farmer_name(number)
 
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(120), unique=True)
+    region = db.Column(db.String(100))
     password_hash = db.Column(db.String(80))
 
     @property
@@ -59,6 +73,7 @@ class Farmer(db.Model):
     name = db.Column(db.String(50))
     surname = db.Column(db.String(50))
     location = db.Column(db.String(50))
+    requests= db.relationship('Question', backref='farmer',lazy='dynamic')
 
     def __init__(self, number, name, surname, location):
         self.number = number
