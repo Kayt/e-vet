@@ -1,5 +1,6 @@
 from flask import flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user
+from sqlalchemy import desc
 
 import twilio.twiml
 from google.cloud import translate
@@ -329,8 +330,9 @@ def sms_survey():
 @app.route('/index')
 @login_required
 def index():
+    requests = Question.query.order_by(desc(Question.id)).limit(20)
     reginal = Farmer.query.filter_by(location=current_user.region)
-    return render_template('index.html', requests=Question.newest(), reginal=reginal)
+    return render_template('index.html', requests=requests, reginal=reginal)
 
 @app.route("/login", methods=["GET","POST"])
 def login():
