@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}
+All Diseases
+{% endblock %}
+
+{% block style %}
+ <style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style> 
+{% endblock %}
+
+{% block content %}
+<article>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Symptoms</th>
+            <th>Rememdy</th>
+        </tr>
+        {% for disease in diseases %}
+            <tr>
+                <td>{{ disease.name }}</td>
+                <td>{{ disease.surname }}</td>
+                <td>{{ disease.location }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</article>
+{% endblock %}

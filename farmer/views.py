@@ -399,6 +399,12 @@ def profile(id):
     form.email.data = user.email
     form.region.data = user.region
     return render_template('profile.html', form=form)
+
+@app.route('/diseases')
+@login_required
+def diseases():
+    diseases = Disease.query.all()
+    return render_template('diseases.html', diseases=diseases)
     
 
 @app.route('/admin')
