@@ -6,6 +6,19 @@ Admin Portal
 
 {% block content %}
 <article>
+    <h2>Requests from your Region</h2>
+    {% if reginal.count() == 0 %}
+        <i>No requests from your Region</i>
+    {% else %}
+        {% for farmer in reginal %}
+            {% for request in farmer.requests %}
+             <div><p>{{ request.name }}: <b><a>{{ request.content }}</a></b></p></div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+</article>
+<article>
+    <h2>All Requests</h2>
     {% for request in requests %}
     <div><p>{{ request.name }}: <b><a>{{ request.content }}</a></b></p></div>
     {% endfor %}

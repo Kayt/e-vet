@@ -51,8 +51,11 @@
 
                 {% block content %}{% endblock %}
                 <aside>
-                    <h3>aside</h3>
-                    <i>No Requests Yet</i>
+                    <h3>Quick links</h3>
+                    <ul>
+                        <li><a href="{{ url_for('profile',id=current_user.id)}}"><i>Edit Profile</i></a></li>
+                        <li><a href="{{ url_for('addDiesease')}}"><i>Add Disease</i></a></li>
+                    </ul>
                 </aside>
 
             </div> <!-- #main -->

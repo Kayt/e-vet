@@ -1,22 +1,16 @@
-from flask import render_template, redirect, url_for, request, session, flash
-from flask_login import login_user, logout_user, current_user, login_required
-
-from . import app, db, login_manager, basic_auth
-from flask import render_template
-from .models import Question, User, Disease, Farmer
-from .forms import SignupForm, LoginForm, AddDiseaseForm
-
-from textblob import TextBlob
+from flask import flash, redirect, render_template, request, session, url_for
+from flask_login import current_user, login_required, login_user, logout_user
 
 import twilio.twiml
+from google.cloud import translate
+from textblob import TextBlob
 
+from . import app, basic_auth, db, login_manager
+from .forms import AddDiseaseForm, LoginForm, SignupForm, EditForm
+from .models import Disease, Farmer, Question, User
+from .naiveBayesClassifier.classifier import Classifier
 from .naiveBayesClassifier.tokenizer import Tokenizer
 from .naiveBayesClassifier.trainer import Trainer
-from .naiveBayesClassifier.classifier import Classifier
-
-from google.cloud import translate 
-
-
 
 token = Tokenizer()
 
@@ -318,7 +312,7 @@ def sms_survey():
         else:
             classification = symptomClassifier.classify(result)
             for cl in classification:
-                if cl[1] > 0.001:
+                if cl[1] > 0.00001:
                     response.message(cl[0])
                 else:
                     response.message('Your query has been forwarded to experts you will be texted the results')
@@ -336,7 +330,8 @@ def sms_survey():
 @login_required
 def index():
     requests = Question.query.all()
-    return render_template('index.html', requests=requests)
+    reginal = Farmer.query.filter_by(location=current_user.region)
+    return render_template('index.html', requests=requests, reginal=reginal)
 
 @app.route("/login", methods=["GET","POST"])
 def login():
@@ -385,6 +380,25 @@ def addDiesease():
 def viewFarmers():
     farmers = Farmer.query.all()
     return render_template('farmers.html', farmers=farmers)
+
+@app.route('/profile/<id>', methods=["GET","POST"])
+@login_required
+def profile(id):
+    form = EditForm()
+    user = User.query.get(id)
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data
+        user.region = form.region.data
+        db.session.add(user)
+        db.session.commit()
+        flash('Changes were made successfully!!')
+        return redirect(url_for('index'))
+    form.username.data = user.username
+    form.email.data = user.email
+    form.region.data = user.region
+    return render_template('profile.html', form=form)
+    
 
 @app.route('/admin')
 @basic_auth.required

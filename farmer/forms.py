@@ -4,6 +4,11 @@ from wtforms.validators import DataRequired, url, Length, Email, Regexp, EqualTo
 
 from models import User
 
+class EditForm(FlaskForm):
+	username = StringField('Your Username: ')
+	email = StringField('Your e-mail: ')
+	region= StringField('Your Region: ')
+
 class AddDiseaseForm(FlaskForm):
 	name = StringField('name', validators=[DataRequired()])
 	symptoms = TextAreaField('symptoms', validators=[DataRequired()])

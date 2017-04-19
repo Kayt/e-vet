@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "form_macros.html" import render_field %}
+
+{% block title %}
+E-Vet-- Profile
+{% endblock %}
+
+{% block content %}
+	<section>
+		<h1 style="clear: both">View and Edit Your Profile</h1>
+		<form action="{{ url_for('profile', id=current_user.id) }}" method="post" name="profile">
+			{{ form.hidden_tag() }}
+			<table>
+				{{ render_field(form.username, size=50) }}
+				{{ render_field(form.email, size=50) }}
+				{{ render_field(form.region, size=50) }}
+
+				<tr class="submit">
+					<td></td>
+					<td><button type="submit">Update Changes</button></td>
+				</tr>
+			</table>
+		</form>
+	</section>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}
