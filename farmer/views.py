@@ -329,9 +329,8 @@ def sms_survey():
 @app.route('/index')
 @login_required
 def index():
-    requests = Question.query.all()
     reginal = Farmer.query.filter_by(location=current_user.region)
-    return render_template('index.html', requests=requests, reginal=reginal)
+    return render_template('index.html', requests=Question.newest(), reginal=reginal)
 
 @app.route("/login", methods=["GET","POST"])
 def login():

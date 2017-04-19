@@ -1,5 +1,6 @@
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
+from sqlalchemy import desc
 
 from farmer import db
 
@@ -17,6 +18,9 @@ class Question(db.Model):
     number = db.Column(db.String(100))
     name = db.Column(db.String(100))
     farmer_id = db.Column(db.Integer, db.ForeignKey('farmer.id'))
+
+    def newest():
+    		return Question.query.order_by(desc(Question.id))
 
     def __init__(self, content, number):
         self.content = content
