@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% from "form_macros.html" import render_field %}
 
+{% block title %}
+E-Vet -- Add Disease
+{% endblock %}
+
 {% block content %}
 <form action="" method="post" name="add">
     {{ form.hidden_tag() }}
