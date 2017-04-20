@@ -315,10 +315,11 @@ def sms_survey():
             classification = symptomClassifier.classify(result)
             for cl in classification:
                 if cl[1] > 0.00001:
-                    response.message(cl[0])
+                    sol = Disease.query.filter_by(name=cl[0]).first()
+                    response.message(sol.symptoms)
                     return str(response)
                 else:
-                    response.message('Your query has been forwarded to experts you will be texted the results')
+                    response.message('Mubvunzo venyu vasirwa maKurukota')
                     ques = Question(content=body, number=phone)
                     db.session.add(ques)
                     db.session.commit()
