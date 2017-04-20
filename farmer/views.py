@@ -310,16 +310,19 @@ def sms_survey():
             db.session.add(farmer)
             db.session.commit()
             response.message('{} you have been added successfully!'.format(farmer.name))
+            return str(response)
         else:
             classification = symptomClassifier.classify(result)
             for cl in classification:
                 if cl[1] > 0.00001:
                     response.message(cl[0])
+                    return str(response)
                 else:
                     response.message('Your query has been forwarded to experts you will be texted the results')
                     ques = Question(content=body, number=phone)
                     db.session.add(ques)
                     db.session.commit()
+                    return str(response)
 
     response.message('Please specify the symptoms that you are seeing')
 
