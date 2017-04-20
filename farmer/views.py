@@ -317,15 +317,15 @@ def sms_survey():
                 if cl[1] > 0.00001:
                     sol = Disease.query.filter_by(name=cl[0]).first()
                     if sol is not None:
-                        response.message(sol.symptoms)
+                        response.message(sol.remedy)
                         return str(response)
-                    response.message('Mubvunzo venyu vasirwa maKurukota')
+                    response.message('Mubvunzo venyu vatumirwa vana mazvikokota')
                     ques = Question(content=body, number=phone)
                     db.session.add(ques)
                     db.session.commit()
                     return str(response)
                 else:
-                    response.message('Mubvunzo venyu vasirwa maKurukota')
+                    response.message('Mubvunzo venyu vatumirwa vana mazvikokota')
                     ques = Question(content=body, number=phone)
                     db.session.add(ques)
                     db.session.commit()
