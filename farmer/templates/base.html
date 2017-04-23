@@ -68,7 +68,7 @@
                         {% else %}
                             {% for farmer in reginal %}
                                 {% for request in farmer.critical_requests %}
-                                <div><p>{{ request.name }}: <b><a>{{ request.content }}</a></b></p></div>
+                                <li>{{ request.name }}: <b><a>{{ request.content }}</a><li>
                                 {% endfor %}
                             {% endfor %}
                         {% endif %}
