@@ -51,12 +51,28 @@
 
                 {% block content %}{% endblock %}
                 <aside>
+                {% if current_user.is_authenticated %}
                     <h3>Quick links</h3>
                     <ul>
                         <li><a href="{{ url_for('profile',id=current_user.id)}}"><i>Edit Profile</i></a></li>
                         <li><a href="{{ url_for('addDiesease')}}"><i>Add Disease</i></a></li>
-                        <li><a href="{{ url_for('diseases')}}"><i>All Diseases</i></a></li>
+                        <li><a href="{{ url_for('diseases')}}"><i>All Diseases</i></a></li>   
                     </ul>
+                    <h3>Critical Issues in your Region</h3>
+                    <ul>
+                        {% if reginal.count() == 0 %}
+                            <i>No Critical requests from your Region</i>
+                        {% else %}
+                            {% for farmer in reginal %}
+                                {% for request in farmer.critical_requests %}
+                                <div><p>{{ request.name }}: <b><a>{{ request.content }}</a></b></p></div>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
+                {% else %}
+                    <i>All important and urgent requests will be shown here once you log in!</i>
+                {% endif %}
                 </aside>
 
             </div> <!-- #main -->

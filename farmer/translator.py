@@ -8,9 +8,5 @@ target = 'en'
 
 translation = translate_client.translate(text, target_language=target)
 
-result = translation['translatedText']
+print translation['translatedText']
 
-if 'hello' in result:
-    print 'Yes'
-else:
-    print 'no'

@@ -278,11 +278,10 @@ newsClassifier = Classifier(newsTrainer.data, token)
 
 # Now you have a classifier which can give a try to classifiy text of news whose
 # category is unknown, yet.
-classification = newsClassifier.classify("Chicken biting each other on the head")
+classification = newsClassifier.classify("calf is anxious breath, a spy and a throat mucus discharge")
 
 
 
 # the classification variable holds the detected categories sorted
-for cl in classification:
-    if cl[1] > 0.0001:
-        print cl
+for cl in classification[:1]:
+    print cl[0]

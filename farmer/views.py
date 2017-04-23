@@ -39,6 +39,9 @@ symptomSet =[
     { "name":"Calf", "symptoms":"Calf ,Problems in feeding and has yellow patches of dead tissues on the throat ,gums and tongue " },
     { "name":"Calf", "symptoms":"Patches of yellowish, dead tissue appear on the edges of the tongue, gums, & throat and not breathing properly." },
     { "name":"Calf", "symptoms":"Calves not eating and drinking and have problems in breathing" },
+    { "name":"Calf", "symptoms":"calf is breathing problem" },
+    { "name":"Calf", "symptoms":"calf does not drink well sikudya" },
+    { "name":"Calf", "symptoms":"calf will not drink sikudya and difficulty breathing" },
     { "name":"Calf", "symptoms":"Patches of dead tissues on the calves tongue ,gums and throats" },
     { "name":"Calf", "symptoms":"Gums cracking ,showing dead tissues and having difficulties in feeding and breathing" },
     { "name":"Grain overload", "symptoms":"Indigestion,collapse,frequently death, temperature too high 41 degrees" },
@@ -313,23 +316,28 @@ def sms_survey():
             return str(response)
         else:
             classification = symptomClassifier.classify(result)
-            for cl in classification:
-                if cl[1] > 0.00001:
-                    sol = Disease.query.filter_by(name=cl[0]).first()
-                    if sol is not None:
-                        response.message(sol.remedy)
-                        return str(response)
-                    response.message('Mubvunzo venyu vatumirwa vana mazvikokota')
+            for cl in classification[:1]:
+                sol = Disease.query.filter_by(name=cl[0]).first()
+                if sol is not None:
+                    if sol.category == 'Primary':
+                        ques = Critical(content=body, number=phone)
+                        db.session.add(ques)
+                        db.session.commit()
+                        response.message("Mubvunzo venyu vatumirwa vana mazvikokota Primary")
+                    text = sol.remedy
+                    target = 'sn'
+                    translation = translate_client.translate(text, target_language=target)
+                    result = translation['translatedText']
+                    response.message(result)
                     ques = Question(content=body, number=phone)
                     db.session.add(ques)
                     db.session.commit()
                     return str(response)
-                else:
-                    response.message('Mubvunzo venyu vatumirwa vana mazvikokota')
-                    ques = Question(content=body, number=phone)
-                    db.session.add(ques)
-                    db.session.commit()
-                    return str(response)
+                response.message('Mubvunzo venyu vatumirwa vana mazvikokota')
+                ques = Question(content=body, number=phone)
+                db.session.add(ques)
+                db.session.commit()
+                return str(response)
 
     response.message('Please specify the symptoms that you are seeing')
 

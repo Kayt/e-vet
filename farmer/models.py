@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -16,6 +18,7 @@ class Question(db.Model):
     content = db.Column(db.Text, nullable=False)
     number = db.Column(db.String(100))
     name = db.Column(db.String(100))
+    time = db.Column(db.DateTime)
     farmer_id = db.Column(db.Integer, db.ForeignKey('farmer.id'))
 
     def __init__(self, content, number):
@@ -23,6 +26,24 @@ class Question(db.Model):
         self.number = number
         self.farmer_id = get_farmer(number)
         self.name = get_farmer_name(number)
+        self.time = datetime.utcnow()
+
+class Critical(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    number = db.Column(db.String(100))
+    name = db.Column(db.String(100))
+    seen = db.Column(db.Boolean)
+    time = db.Column(db.DateTime)
+    farmer_id = db.Column(db.Integer, db.ForeignKey('farmer.id'))
+
+    def __init__(self, content, number):
+        self.content = content
+        self.number = number
+        self.farmer_id = get_farmer(number)
+        self.name = get_farmer_name(number)
+        self.time = datetime.utcnow()
+        self.seen = False
 
 
 class User(db.Model, UserMixin):
@@ -56,6 +77,7 @@ class User(db.Model, UserMixin):
 class Disease(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
+    category = db.Column(db.String(50))
     symptoms = db.Column(db.Text)
     remedy = db.Column(db.Text)
 
@@ -74,6 +96,7 @@ class Farmer(db.Model):
     surname = db.Column(db.String(50))
     location = db.Column(db.String(50))
     requests= db.relationship('Question', backref='farmer',lazy='dynamic')
+    critical_requests = db.relationship('Critical', backref='farmer', lazy='dynamic')
 
     def __init__(self, number, name, surname, location):
         self.number = number
