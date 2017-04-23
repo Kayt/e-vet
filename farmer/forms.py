@@ -4,6 +4,12 @@ from wtforms.validators import DataRequired, url, Length, Email, Regexp, EqualTo
 
 from models import User
 
+class EditDiseaseForm(FlaskForm):
+	name = StringField('name')
+	category = SelectField('category')
+	symptoms = TextAreaField('symptoms')
+	remedy = TextAreaField('remedy')
+
 class EditForm(FlaskForm):
 	username = StringField('Your Username: ')
 	email = StringField('Your e-mail: ')

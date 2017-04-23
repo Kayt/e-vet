@@ -29,12 +29,14 @@ All Diseases
     <table>
         <tr>
             <th>Name</th>
+            <th>Category</th>
             <th>Symptoms</th>
             <th>Remedy</th>
         </tr>
         {% for disease in diseases %}
             <tr>
-                <td>{{ disease.name }}</td>
+                <td><a href="{{ url_for('disease', name=disease.name )}}"> {{disease.name }}</a></td>
+                <td>{{ disease.category }}</td>
                 <td>{{ disease.symptoms}}</td>
                 <td>{{ disease.remedy }}</td>
             </tr>

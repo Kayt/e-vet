@@ -7,7 +7,7 @@ from google.cloud import translate
 from textblob import TextBlob
 
 from . import app, basic_auth, db, login_manager
-from .forms import AddDiseaseForm, LoginForm, SignupForm, EditForm
+from .forms import AddDiseaseForm, LoginForm, SignupForm, EditForm, EditDiseaseForm
 from .models import Disease, Farmer, Question, User
 from .naiveBayesClassifier.classifier import Classifier
 from .naiveBayesClassifier.tokenizer import Tokenizer
@@ -427,6 +427,27 @@ def diseases():
     reginal = Farmer.query.filter_by(location=current_user.region)
     diseases = Disease.query.all()
     return render_template('diseases.html', diseases=diseases, reginal=reginal)
+
+@app.route('/<name>', methods=["GET","POST"])
+@login_required
+def disease(name):
+    reginal = Farmer.query.filter_by(location=current_user.region)
+    form = EditDiseaseForm()
+    dis = Disease.query.filter_by(name=name).first()
+    if form.validate_on_submit():
+        dis.name = form.name.data
+        dis.category = form.category.data
+        dis.symptoms = form.symptoms.data
+        dis.remedy = form.remedy.data
+        db.session.add(dis)
+        db.session.commit()
+        flash('Changes were made successfully!!')
+        return redirect(url_for('diseases'))
+    form.name.data = dis.name
+    form.category.data = dis.category
+    form.symptoms.data = dis.symptoms
+    form.remedy.data = dis.remedy
+    return render_template('disease.html', form=form, reginal=reginal, dis=dis)
     
 
 @app.route('/admin')
