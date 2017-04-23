@@ -10,6 +10,7 @@ E-Vet -- Add Disease
     {{ form.hidden_tag() }}
     <table>
         {{ render_field(form.name, size=50) }}
+        {{ render_field(form.category, size=50)}}
         {{ render_field(form.symptoms) }}
         {{ render_field(form.remedy) }}
         {{ render_field(form.submit) }}

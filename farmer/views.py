@@ -354,6 +354,7 @@ def index():
 
 @app.route("/login", methods=["GET","POST"])
 def login():
+    reginal = Farmer.query.filter_by(location=current_user.region)
     form = LoginForm()
     if form.validate_on_submit():
         user = User.get_by_username(form.username.data)
@@ -362,7 +363,7 @@ def login():
             flash("logged in successfully as {}".format(user.username))
             return redirect(request.args.get('next') or url_for('index'))
         flash("Incorrect username or password")
-    return render_template("login.html", form=form)
+    return render_template("login.html", form=form, reginal=reginal)
 
 @app.route("/logout")
 def logout():
@@ -371,6 +372,7 @@ def logout():
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
+    reginal = Farmer.query.filter_by(location=current_user.region)
     form = SignupForm()
     if form.validate_on_submit():
         user = User(email=form.email.data,
@@ -380,11 +382,12 @@ def signup():
         db.session.commit()
         flash('Welcome, {}! Please login.'.format(user.username))
         return redirect(url_for('.login'))
-    return render_template("signup.html", form=form)
+    return render_template("signup.html", form=form, reginal=reginal)
 
 @app.route('/add', methods=["GET","POST"])
 @login_required
 def addDiesease():
+    reginal = Farmer.query.filter_by(location=current_user.region)
     form = AddDiseaseForm()
     if form.validate_on_submit():
         new = Disease(name=form.name.data, symptoms=form.symptoms.data,remedy=form.remedy.data)
@@ -392,17 +395,19 @@ def addDiesease():
         db.session.commit()
         flash('Diesease added to database!')
         return redirect(url_for('index'))
-    return render_template('addDiesease.html', form=form)
+    return render_template('addDiesease.html', form=form, reginal=reginal)
 
 @app.route('/farmers')
 @login_required
 def viewFarmers():
+    reginal = Farmer.query.filter_by(location=current_user.region)
     farmers = Farmer.query.all()
-    return render_template('farmers.html', farmers=farmers)
+    return render_template('farmers.html', farmers=farmers, reginal=reginal)
 
 @app.route('/profile/<id>', methods=["GET","POST"])
 @login_required
 def profile(id):
+    reginal = Farmer.query.filter_by(location=current_user.region)
     form = EditForm()
     user = User.query.get(id)
     if form.validate_on_submit():
@@ -416,13 +421,14 @@ def profile(id):
     form.username.data = user.username
     form.email.data = user.email
     form.region.data = user.region
-    return render_template('profile.html', form=form)
+    return render_template('profile.html', form=form, reginal=reginal)
 
 @app.route('/diseases')
 @login_required
 def diseases():
+    reginal = Farmer.query.filter_by(location=current_user.region)
     diseases = Disease.query.all()
-    return render_template('diseases.html', diseases=diseases)
+    return render_template('diseases.html', diseases=diseases, reginal=reginal)
     
 
 @app.route('/admin')
