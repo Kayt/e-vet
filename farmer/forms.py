@@ -6,7 +6,7 @@ from models import User
 
 class EditDiseaseForm(FlaskForm):
 	name = StringField('name')
-	category = SelectField('category')
+	category = SelectField('category', choices=[('Primary', 'Primary'),('Secondary','Secondary')])
 	symptoms = TextAreaField('symptoms')
 	remedy = TextAreaField('remedy')
 

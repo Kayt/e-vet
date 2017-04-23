@@ -83,6 +83,7 @@ class Disease(db.Model):
 
     def __init__(self, name, category, symptoms, remedy):
         self.name = name
+        self.category = category
         self.symptoms = symptoms
         self.remedy = remedy
 
