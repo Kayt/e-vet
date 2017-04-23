@@ -81,7 +81,7 @@ class Disease(db.Model):
     symptoms = db.Column(db.Text)
     remedy = db.Column(db.Text)
 
-    def __init__(self, name, symptoms, remedy):
+    def __init__(self, name, category, symptoms, remedy):
         self.name = name
         self.symptoms = symptoms
         self.remedy = remedy

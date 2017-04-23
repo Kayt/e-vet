@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm 
-from wtforms.fields import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms.fields import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, url, Length, Email, Regexp, EqualTo, ValidationError
 
 from models import User
@@ -11,6 +11,7 @@ class EditForm(FlaskForm):
 
 class AddDiseaseForm(FlaskForm):
 	name = StringField('name', validators=[DataRequired()])
+	category = SelectField('category', validators=[DataRequired()], choices=[('Primary', 'Primary'),('Secondary','Seconday')])
 	symptoms = TextAreaField('symptoms', validators=[DataRequired()])
 	remedy = TextAreaField('remedy', validators=[DataRequired()])
 	submit = SubmitField('Submit')

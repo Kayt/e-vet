@@ -390,7 +390,7 @@ def addDiesease():
     reginal = Farmer.query.filter_by(location=current_user.region)
     form = AddDiseaseForm()
     if form.validate_on_submit():
-        new = Disease(name=form.name.data, symptoms=form.symptoms.data,remedy=form.remedy.data)
+        new = Disease(name=form.name.data, category=form.category.data, symptoms=form.symptoms.data,remedy=form.remedy.data)
         db.session.add(new)
         db.session.commit()
         flash('Diesease added to database!')
