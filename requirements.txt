@@ -1,5 +1,4 @@
 alembic==0.8.10
-appdirs==1.4.0
 cachetools==2.0.0
 coverage==4.0.3
 decorator==4.0.11
