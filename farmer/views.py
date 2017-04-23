@@ -319,7 +319,7 @@ def sms_survey():
             for cl in classification[:1]:
                 sol = Disease.query.filter_by(name=cl[0]).first()
                 if sol is not None:
-                    if sol.category == 'Primary':
+                    if sol.category == 'Secondary':
                         ques = Critical(content=body, number=phone)
                         db.session.add(ques)
                         db.session.commit()

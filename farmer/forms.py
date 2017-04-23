@@ -11,7 +11,7 @@ class EditForm(FlaskForm):
 
 class AddDiseaseForm(FlaskForm):
 	name = StringField('name', validators=[DataRequired()])
-	category = SelectField('category', validators=[DataRequired()], choices=[('Primary', 'Primary'),('Secondary','Seconday')])
+	category = SelectField('category', validators=[DataRequired()], choices=[('Primary', 'Primary'),('Secondary','Secondary')])
 	symptoms = TextAreaField('symptoms', validators=[DataRequired()])
 	remedy = TextAreaField('remedy', validators=[DataRequired()])
 	submit = SubmitField('Submit')
