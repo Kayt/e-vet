@@ -12,7 +12,7 @@ Admin Portal
     {% else %}
         {% for farmer in reginal %}
             {% for request in farmer.requests %}
-             <div><p>{{ request.name }}: <b><a>{{ request.content }}</a></b></p></div>
+             <div><p>{{ request.name }}: <b><a>{{ request.content }} <i>Last seen: {{ moment(request.time).fromNow() }}</i></a></b></p></div>
             {% endfor %}
         {% endfor %}
     {% endif %}
