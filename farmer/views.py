@@ -323,7 +323,7 @@ def sms_survey():
                         ques = Critical(content=body, number=phone)
                         db.session.add(ques)
                         db.session.commit()
-                        response.message("Mubvunzo venyu vatumirwa vana mazvikokota Primary")
+                        response.message("Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro")
                     text = sol.remedy
                     target = 'sn'
                     translation = translate_client.translate(text, target_language=target)
@@ -333,7 +333,7 @@ def sms_survey():
                     db.session.add(ques)
                     db.session.commit()
                     return str(response)
-                response.message('Mubvunzo venyu vatumirwa vana mazvikokota')
+                response.message('Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro')
                 ques = Question(content=body, number=phone)
                 db.session.add(ques)
                 db.session.commit()
