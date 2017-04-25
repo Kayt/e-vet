@@ -317,12 +317,20 @@ def sms_survey():
         else:
             classification = symptomClassifier.classify(result)
             for cl in classification[:1]:
+                if cl[1] == 0:
+                    test = Farmer.query.filter_by(number=phone).first()
+                    if test is not None:
+                        response.message("Tinokumbirawo kuti mutumire mubvunzo unezvekuita nezvirwere zvezvipfuyo zvenyu")
+                        return str(response)
+                    response.message("tumirai REGISTER, ZITA RENYU, KWAMUNOGARA kutu mujoiniswe musystem. Tatenda.")
+                    return str(response)
                 sol = Disease.query.filter_by(name=cl[0]).first()
                 if sol is not None:
                     if sol.category == 'Secondary':
                         ques = Critical(content=body, number=phone)
                         db.session.add(ques)
                         db.session.commit()
+                        flash('A critical Question was asked You need to respond urgently')
                         response.message("Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro")
                     text = sol.remedy
                     target = 'sn'
