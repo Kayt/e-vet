@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
 
         <script src="{{ url_for('static', filename='js/vendor/modernizr-2.8.3-respond-1.4.2.min.js') }}"></script>
+
         <style>
             table {
                 font-family: arial, sans-serif;
@@ -28,6 +29,10 @@
                 background-color: #dddddd;
             }
         </style>
+
+        {{ moment.include_jquery() }}
+        {{ moment.include_moment() }}
+        
     </head>
     <body>
         <div class="header-container">
@@ -59,20 +64,9 @@
                 </article>
                 
                 <article>
-                    <table>
-                        <tr>
-                            <th>Username </th>
-                            <th>email</th>
-                            <th></th>
-                        </tr>
-                        {% for user in users %}
-                            <tr>
-                                <td>{{ user.username }}</td>
-                                <td>{{ user.email }}</td>
-                                <td><a href="{{ url_for('delete', id=user.id) }}">Remove expert</a></td>
-                            </tr>
-                        {% endfor %}
-                    </table>
+                    {% for disease in diseases %}
+                        <p>{{ disease.vet_name }} added/modified this disease <i><a href="">{{ disease.name }}</a></i> <b> {{ moment(disease.timestamp).fromNow() }}</b> 
+                    {% endfor %}
                 </article>
 
                 <aside>

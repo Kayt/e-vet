@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}
+All responses
+{% endblock %}
+
+{% block style %}
+ <style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style> 
+{% endblock %}
+
+{% block content %}
+<article>
+    <table>
+        <tr>
+            <th>Question</th>
+            <th>Asked by</th>
+            <th>System said</th>
+            <th></th>
+        </tr>
+        {% for response in responses %}
+            <tr>
+                <td>{{response.content }}</td>
+                <td>{{ response.name }}</td>
+                <td>{{ response.response}}</td>
+                <td><a href="">Send Message to farmer</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+</article>
+{% endblock %}

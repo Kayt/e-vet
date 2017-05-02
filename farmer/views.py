@@ -7,7 +7,7 @@ from google.cloud import translate
 from textblob import TextBlob
 
 from . import app, basic_auth, db, login_manager
-from .forms import AddDiseaseForm, LoginForm, SignupForm, EditForm, EditDiseaseForm
+from .forms import AddDiseaseForm, LoginForm, SignupForm, EditForm, EditDiseaseForm, AddUserForm, AnswerForm
 from .models import Disease, Farmer, Question, User
 from .naiveBayesClassifier.classifier import Classifier
 from .naiveBayesClassifier.tokenizer import Tokenizer
@@ -278,7 +278,7 @@ symptomSet =[
     { "name":"Caseous lymphadenitis", "symptoms":"Sheep losing a lot of blood and has high temperature" }
 ]
 for symptom in symptomSet:
-    symptomTrainer.train(symptom['symptoms'], symptom['name'])
+    symptomTrainer.train("symptom['symptoms']", symptom['name'])
 
 # When you have sufficient trained data, you are almost done and can start to use
 # a classifier.
@@ -305,47 +305,108 @@ def sms_survey():
         text = body
         target = 'en'
         translation = translate_client.translate(text, target_language=target)
-        result = translation['translatedText']
+        result = translation['translatedText']   #this variable stores our shona - english translation
 
-        if 'register' in result.lower():
-            new = result.split(' ')
-            farmer = Farmer(number=phone, name=new[1], surname=new[2], location=" ".join(new[3:]))
-            db.session.add(farmer)
-            db.session.commit()
-            response.message('{} you have been added successfully!'.format(farmer.name))
-            return str(response)
-        else:
-            classification = symptomClassifier.classify(result)
-            for cl in classification[:1]:
-                if cl[1] == 0:
-                    test = Farmer.query.filter_by(number=phone).first()
-                    if test is not None:
-                        response.message("Tinokumbirawo kuti mutumire mubvunzo unezvekuita nezvirwere zvezvipfuyo zvenyu")
-                        return str(response)
-                    response.message("tumirai REGISTER, ZITA RENYU, KWAMUNOGARA kutu mujoiniswe musystem. Tatenda.")
-                    return str(response)
-                sol = Disease.query.filter_by(name=cl[0]).first()
-                if sol is not None:
-                    if sol.category == 'Secondary':
-                        ques = Critical(content=body, number=phone)
-                        db.session.add(ques)
-                        db.session.commit()
-                        flash('A critical Question was asked You need to respond urgently')
-                        response.message("Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro")
-                    text = sol.remedy
-                    target = 'sn'
-                    translation = translate_client.translate(text, target_language=target)
-                    result = translation['translatedText']
-                    response.message(result)
-                    ques = Question(content=body, number=phone)
-                    db.session.add(ques)
-                    db.session.commit()
-                    return str(response)
-                response.message('Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro')
-                ques = Question(content=body, number=phone)
-                db.session.add(ques)
+        # even if the user asks in english the system will still translate to shona so inorder to check if the system is dealing with english or shona we have to put it through a condition
+        # so we will compare the text i.e the message against the translation result
+        
+        if text == result:
+            # English text was provided so we will start processing english text
+            if 'register' in result.lower():
+                new = result.split(' ')
+                farmer = Farmer(number=phone, name=new[1], surname=new[2], location=" ".join(new[3:]))
+                db.session.add(farmer)
                 db.session.commit()
+                response.message('{} you have been added successfully!'.format(farmer.name))
                 return str(response)
+            else: # if the message is not a request but something else
+                classification = symptomClassifier.classify(result)
+                for cl in classification[:1]:
+                    if cl[1] == 0: # if the classification returns zero co-relation
+                        test = Farmer.query.filter_by(number=phone).first()
+                        if test is not None: # if a registered user asks a question does not have anything to do with what the system does
+                            response.message("Could you please ask a question related to animal diseases")
+                            fail = Question(content=text, response='Could you please ask a question related to animal diseases', number=phone)
+                            db.session.add(fail)
+                            db.session.commit()
+                            return str(response) # sends an sms to the user asking them to ask a relevant question
+                        else: # if the farmer is not registered
+                            response.message("please send REGISTER, YOUR NAME and LOCATION to this number")
+                            return str(response) # sends an sms to the user with registration instructions
+                    else: # if the classification returns some co-relation
+                        sol = Disease.query.filter_by(name=cl[0]).first()
+                        if sol is not None: # if the identified disease is in the system 
+                            if sol.category == 'Secondary': # if the disease in question is a critical one 
+                                ques = Critical(content=body, number=phone)
+                                db.session.add(ques)
+                                db.session.commit()
+                                flash('A critical Question was asked You need to respond urgently')
+                                response.message("An expert is looking into your issue and will contact you shortly")
+                                return str(response) # sends an sms to the farmer informing them that an expert will get back to them 
+                            else: # if the disease is not critical 
+                                text = sol.remedy
+                                response.message(text)
+                                ques = Question(content=body, response=text, number=phone)
+                                db.session.add(ques)
+                                db.session.commit()
+                                return str(response) # sends an sms to the farmer with the remedy
+                        else: # if the identified disease is not in the system yet
+                            response.message('An expert will get back to you with the answer')
+                            ques = Question(content=body, response='An expert will get back to you with the answer', number=phone)
+                            db.session.add(ques)
+                            db.session.commit()
+                            return str(response) # sends an sms to the farmer informing them that an expert will contact them
+                
+        else:
+            # Shona or some other language was provided so we will start processing shona text
+
+            if 'register' in result.lower():
+                new = result.split(' ')
+                farmer = Farmer(number=phone, name=new[1], surname=new[2], location=" ".join(new[3:]))
+                db.session.add(farmer)
+                db.session.commit()
+                response.message('{}, registration yako yabudirira!'.format(farmer.name))
+                return str(response)
+            else:
+                classification = symptomClassifier.classify(result)
+                for cl in classification[:1]:
+                    if cl[1] == 0:
+                        test = Farmer.query.filter_by(number=phone).first()
+                        if test is not None:
+                            response.message("Tinokumbirawo kuti mutumire mubvunzo unezvekuita nezvirwere zvezvipfuyo zvenyu")
+                            sn_fail = Question(content=text, response='Tinokumbirawo kuti mutumire mubvunzo unezvekuita nezvirwere zvezvipfuyo zvenyu', number=phone)
+                            db.session.add(sn_fail)
+                            db.session.commit()
+                            return str(response)
+                        else:
+                            response.message("tumirai REGISTER, ZITA RENYU, KWAMUNOGARA kutu mujoiniswe musystem. Tatenda.")
+                            return str(response)
+                    else:
+                        sol = Disease.query.filter_by(name=cl[0]).first()
+                        if sol is not None:
+                            if sol.category == 'Secondary':
+                                ques = Critical(content=body, number=phone)
+                                db.session.add(ques)
+                                db.session.commit()
+                                flash('A critical Question was asked You need to respond urgently')
+                                response.message("Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro")
+                                return str(response)
+                            else:
+                                text = sol.remedy
+                                target = 'sn'
+                                translation = translate_client.translate(text, target_language=target)
+                                result = translation['translatedText']
+                                response.message(result)
+                                ques = Question(content=body, response=result, number=phone)
+                                db.session.add(ques)
+                                db.session.commit()
+                                return str(response)
+                        else:
+                            response.message('Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro')
+                            ques = Question(content=body, response='Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro', number=phone)
+                            db.session.add(ques)
+                            db.session.commit()
+                            return str(response)
 
     response.message('Please specify the symptoms that you are seeing')
 
@@ -396,7 +457,8 @@ def addDiesease():
     reginal = Farmer.query.filter_by(location=current_user.region)
     form = AddDiseaseForm()
     if form.validate_on_submit():
-        new = Disease(name=form.name.data, category=form.category.data, symptoms=form.symptoms.data,remedy=form.remedy.data)
+        new = Disease(name=form.name.data, category=form.category.data, symptoms=form.symptoms.data,remedy=form.remedy.data,
+        shona_remedy=form.shona_remedy.data, vet = current_user.username)
         db.session.add(new)
         db.session.commit()
         flash('Diesease added to database!')
@@ -447,6 +509,7 @@ def disease(name):
         dis.category = form.category.data
         dis.symptoms = form.symptoms.data
         dis.remedy = form.remedy.data
+        dis.shona_remedy = form.shona_remedy.data
         db.session.add(dis)
         db.session.commit()
         flash('Changes were made successfully!!')
@@ -455,11 +518,56 @@ def disease(name):
     form.category.data = dis.category
     form.symptoms.data = dis.symptoms
     form.remedy.data = dis.remedy
+    form.shona_remedy.data = dis.shona_remedy
     return render_template('disease.html', form=form, reginal=reginal, dis=dis)
-    
 
 @app.route('/admin')
 @basic_auth.required
 def dashboard():
     users = User.query.all()
     return render_template('dashboard.html', users=users)
+
+@app.route("/adduser", methods=["GET", "POST"])
+def addUser():
+    form = AddUserForm()
+    if form.validate_on_submit():
+        user = User(email=form.email.data,
+                    username=form.username.data,
+                    password = form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('{}! Has been added as an expert'.format(user.username))
+        return redirect(url_for('dashboard'))
+    return render_template("addUser.html", form=form)
+
+@app.route("/syslogs")
+def logs():
+    diseases = Disease.query.order_by(desc(Disease.id))
+    return render_template('logs.html', diseases=diseases)
+
+@app.route('/delete/<id>', methods=["GET", "POST"])
+def delete(id):
+    User.query.filter_by(id=id).delete()
+    db.session.commit()
+    return redirect('dashboard')
+
+@app.route('/responses')
+def responses():
+    reginal = Farmer.query.filter_by(location=current_user.region)
+    responses = Question.query.all()
+    return render_template('responses.html', responses=responses, reginal=reginal)
+
+@app.route('/answer/<id>', methods=['GET','POST'])
+def answerQuestion(id):
+    que = Critical.query.filter_by(id=id).first()
+    form = AnswerForm()
+    if form.validate_on_submit():
+        #send 
+        return True
+    return True 
+
+    
+    
+    
+
+

@@ -4,11 +4,21 @@ from wtforms.validators import DataRequired, url, Length, Email, Regexp, EqualTo
 
 from models import User
 
+class AnswerForm(FlaskForm):
+    answer = TextAreaField('Enter Response', validators=[DataRequired()])
+
+class AddUserForm(FlaskForm):
+	username = StringField('Username', validators=[DataRequired(), Length(3, 80)])
+	password = PasswordField('Password', validators=[DataRequired(),EqualTo('password2', message='Passwords must match.')])
+	password2 = PasswordField('Confirm Password', validators=[DataRequired()])
+	email = StringField('Email', validators=[DataRequired(), Length(1, 120), Email()])
+
 class EditDiseaseForm(FlaskForm):
 	name = StringField('name')
 	category = SelectField('category', choices=[('Primary', 'Primary'),('Secondary','Secondary')])
 	symptoms = TextAreaField('symptoms')
 	remedy = TextAreaField('remedy')
+	shona_remedy = TextAreaField('remedy in shona')
 
 class EditForm(FlaskForm):
 	username = StringField('Your Username: ')
@@ -20,6 +30,7 @@ class AddDiseaseForm(FlaskForm):
 	category = SelectField('category', validators=[DataRequired()], choices=[('Primary', 'Primary'),('Secondary','Secondary')])
 	symptoms = TextAreaField('symptoms', validators=[DataRequired()])
 	remedy = TextAreaField('remedy', validators=[DataRequired()])
+	shona_remedy = TextAreaField('remedy in shona', validators=[DataRequired()])
 	submit = SubmitField('Submit')
 
 class LoginForm(FlaskForm):

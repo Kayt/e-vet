@@ -29,7 +29,6 @@
                             <li><a href="{{ url_for('index')}}">Current Requests</a></li>
                             <li><a href="{{ url_for('logout') }}">Sign Out</a></li>
                         {% else %}
-                            <li><a href="{{ url_for('signup') }}">Sign Up</a></li>
                             <li><a href="{{ url_for('login') }}">Sign In</a></li>
                         {% endif %}
                     </ul>
@@ -58,6 +57,7 @@
                     <h3>Quick links</h3>
                     <ul>
                         <li><a href="{{ url_for('profile',id=current_user.id)}}"><i>Edit Profile</i></a></li>
+                        <li><a href="{{ url_for('responses') }}">View Sent Responses</a></li>
                         <li><a href="{{ url_for('addDiesease')}}"><i>Add Disease</i></a></li>
                         <li><a href="{{ url_for('diseases')}}"><i>All Diseases</i></a></li>   
                     </ul>
@@ -68,7 +68,7 @@
                         {% else %}
                             {% for farmer in reginal %}
                                 {% for request in farmer.critical_requests %}
-                                <li>{{ request.name }}: <b><a>{{ request.content }}</a><li>
+                                <li>{{ request.name }}: <b><a href="#">{{ request.content }}</a><li>
                                 {% endfor %}
                             {% endfor %}
                         {% endif %}

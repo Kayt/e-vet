@@ -8,5 +8,10 @@ target = 'en'
 
 translation = translate_client.translate(text, target_language=target)
 
-print translation['translatedText']
+result = translation['translatedText']
+
+if text == result:
+    print 'English text was provided'
+else:
+    print 'Shona or some other language was provided'
 

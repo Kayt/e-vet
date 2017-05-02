@@ -16,13 +16,15 @@ def get_farmer_name(number):
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
+    response = db.Column(db.Text)
     number = db.Column(db.String(100))
     name = db.Column(db.String(100))
     time = db.Column(db.DateTime)
     farmer_id = db.Column(db.Integer, db.ForeignKey('farmer.id'))
 
-    def __init__(self, content, number):
+    def __init__(self, content, response, number):
         self.content = content
+        self.response = response
         self.number = number
         self.farmer_id = get_farmer(number)
         self.name = get_farmer_name(number)
@@ -53,6 +55,11 @@ class User(db.Model, UserMixin):
     region = db.Column(db.String(100))
     password_hash = db.Column(db.String(80))
 
+    def __init__(self, email, username, password):
+        self.email = email
+        self.username = username
+        self.password_hash = password
+
     @property
     def password(self):
         raise AttributeError('password: write-only field')
@@ -80,12 +87,18 @@ class Disease(db.Model):
     category = db.Column(db.String(50))
     symptoms = db.Column(db.Text)
     remedy = db.Column(db.Text)
+    shona_remedy = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime)
+    vet_name = db.Column(db.String(100))
 
-    def __init__(self, name, category, symptoms, remedy):
+    def __init__(self, name, category, symptoms, remedy, shona_remedy, vet):
         self.name = name
         self.category = category
         self.symptoms = symptoms
         self.remedy = remedy
+        self.shona_remedy = shona_remedy
+        self.vet_name = vet
+        self.timestamp = datetime.utcnow()
 
     def __repr__(self):
         return '<{}>'.format(self.name)
@@ -111,5 +124,6 @@ class Farmer(db.Model):
             return True 
         else:
             return False 
+
     
 
