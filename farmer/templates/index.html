@@ -17,10 +17,4 @@ Admin Portal
         {% endfor %}
     {% endif %}
 </article>
-<article>
-    <h2>All Requests</h2>
-    {% for request in requests %}
-    <div><p>{{ request.name }}: <b><a>{{ request.content }}</a></b><i> {{ moment(request.time).fromNow() }}</i></p></div>
-    {% endfor %}
-</article>
 {% endblock %}
