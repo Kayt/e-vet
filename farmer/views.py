@@ -1438,6 +1438,27 @@ def answerQuestion(id):
         return True
     return True 
 
+@app.route('/admin/<name>', methods=["GET","POST"])
+def adminDisease(name):
+    form = EditDiseaseForm()
+    dis = Disease.query.filter_by(name=name).first()
+    if form.validate_on_submit():
+        dis.name = form.name.data
+        dis.category = form.category.data
+        dis.symptoms = form.symptoms.data
+        dis.remedy = form.remedy.data
+        dis.shona_remedy = form.shona_remedy.data
+        db.session.add(dis)
+        db.session.commit()
+        flash('Changes were made successfully!!')
+        return redirect(url_for('logs'))
+    form.name.data = dis.name
+    form.category.data = dis.category
+    form.symptoms.data = dis.symptoms
+    form.remedy.data = dis.remedy
+    form.shona_remedy.data = dis.shona_remedy
+    return render_template('adminDisease.html', form=form, dis=dis)
+
     
     
     

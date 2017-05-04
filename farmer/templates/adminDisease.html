@@ -1,3 +1,5 @@
+{% from "form_macros.html" import render_field %}
+
 <!doctype html>
 <html class="no-js" lang="">
     <head>
@@ -11,24 +13,6 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
 
         <script src="{{ url_for('static', filename='js/vendor/modernizr-2.8.3-respond-1.4.2.min.js') }}"></script>
-
-        <style>
-            table {
-                font-family: arial, sans-serif;
-                border-collapse: collapse;
-                width: 100%;
-            }
-
-            td, th {
-                border: 1px solid #dddddd;
-                text-align: left;
-                padding: 8px;
-            }
-
-            tr:nth-child(even) {
-                background-color: #dddddd;
-            }
-        </style>
 
         {{ moment.include_jquery() }}
         {{ moment.include_moment() }}
@@ -64,9 +48,25 @@
                 </article>
                 
                 <article>
-                    {% for disease in diseases %}
-                        <p>{{ disease.vet_name }} added/modified this disease <i><a href="{{ url_for('adminDisease', name=disease.name ) }}">{{ disease.name }}</a></i> <b> {{ moment(disease.timestamp).fromNow() }}</b> 
-                    {% endfor %}
+                    	<section>
+							<h1 style="clear: both">{{ dis.name}}</h1>
+							<form action="{{ url_for('adminDisease', name=dis.name) }}" method="post" name="adminDisease">
+								{{ form.hidden_tag() }}
+								<table>
+									{{ render_field(form.name, size=50) }}
+									{{ render_field(form.category) }}
+									{{ render_field(form.symptoms) }}
+									{{ render_field(form.remedy) }}
+									{{ render_field(form.shona_remedy) }}
+
+									<tr class="submit">
+										<td></td>
+										<td><button type="submit">Update Changes</button></td>
+									</tr>
+								</table>
+							</form>
+						</section>
+
                 </article>
 
             </div> <!-- #main -->
