@@ -1255,7 +1255,7 @@ def sms_survey():
                             else:
                                 text = sol.shona_remedy
                                 response.message(text)
-                                ques = Question(content=body, response=result, number=phone)
+                                ques = Question(content=body, response=text, number=phone)
                                 db.session.add(ques)
                                 db.session.commit()
                                 return str(response)
