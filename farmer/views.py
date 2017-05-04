@@ -1196,6 +1196,9 @@ def sms_survey():
                 return str(response)
             else: # if the message is not a request but something else
                 print 'Starting classification now.........'
+                print 'the classifier will classify the following text'
+                print result
+                print 'procedding with classification'
                 classification = symptomClassifier.classify(result)
                 print 'classification done ..'
                 for cl in classification[:1]:
