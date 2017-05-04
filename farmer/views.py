@@ -1426,7 +1426,7 @@ def delete(id):
 @app.route('/responses')
 def responses():
     reginal = Farmer.query.filter_by(location=current_user.region)
-    responses = Question.query.all()
+    responses = Question.query.order_by(desc(Question.id))
     return render_template('responses.html', responses=responses, reginal=reginal)
 
 @app.route('/answer/<id>', methods=['GET','POST'])
