@@ -1197,17 +1197,10 @@ def sms_survey():
             else: # if the message is not a request but something else
                 classification = symptomClassifier.classify(result)
                 for cl in classification[:1]:
-                    if cl[1] == 0: # if the classification returns zero co-relation
-                        test = Farmer.query.filter_by(number=phone).first()
-                        if test is not None: # if a registered user asks a question does not have anything to do with what the system does
-                            response.message("Could you please ask a question related to animal diseases")
-                            fail = Question(content=text, response='Could you please ask a question related to animal diseases', number=phone)
-                            db.session.add(fail)
-                            db.session.commit()
-                            return str(response) # sends an sms to the user asking them to ask a relevant question
-                        else: # if the farmer is not registered
-                            response.message("please send REGISTER, YOUR NAME and LOCATION to this number")
-                            return str(response) # sends an sms to the user with registration instructions
+                    test = Farmer.query.filter_by(number=phone).first()
+                    if test is None: # if a registered user asks a question does not have anything to do with what the system does
+                        response.message("please send REGISTER, YOUR NAME and LOCATION to this number")
+                        return str(response) # sends an sms to the user with registration instructions
                     else: # if the classification returns some co-relation
                         sol = Disease.query.filter_by(name=cl[0]).first()
                         if sol is not None: # if the identified disease is in the system 
@@ -1245,17 +1238,10 @@ def sms_survey():
             else:
                 classification = symptomClassifier.classify(result)
                 for cl in classification[:1]:
-                    if cl[1] == 0:
-                        test = Farmer.query.filter_by(number=phone).first()
-                        if test is not None:
-                            response.message("Tinokumbirawo kuti mutumire mubvunzo unezvekuita nezvirwere zvezvipfuyo zvenyu")
-                            sn_fail = Question(content=text, response='Tinokumbirawo kuti mutumire mubvunzo unezvekuita nezvirwere zvezvipfuyo zvenyu', number=phone)
-                            db.session.add(sn_fail)
-                            db.session.commit()
-                            return str(response)
-                        else:
-                            response.message("tumirai REGISTER, ZITA RENYU, KWAMUNOGARA kutu mujoiniswe musystem. Tatenda.")
-                            return str(response)
+                    test = Farmer.query.filter_by(number=phone).first()
+                    if test is None:
+                        response.message("tumirai REGISTER, ZITA RENYU, KWAMUNOGARA kutu mujoiniswe musystem. Tatenda.")
+                        return str(response)
                     else:
                         sol = Disease.query.filter_by(name=cl[0]).first()
                         if sol is not None:
