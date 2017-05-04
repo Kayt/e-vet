@@ -1195,16 +1195,22 @@ def sms_survey():
                 response.message('{} you have been added successfully!'.format(farmer.name))
                 return str(response)
             else: # if the message is not a request but something else
+            print 'Starting classification now.........'
                 classification = symptomClassifier.classify(result)
+                print 'classification done ..'
                 for cl in classification[:1]:
+                    print cl
                     test = Farmer.query.filter_by(number=phone).first()
                     if test is None: # if a registered user asks a question does not have anything to do with what the system does
                         response.message("please send REGISTER, YOUR NAME and LOCATION to this number")
                         return str(response) # sends an sms to the user with registration instructions
                     else: # if the classification returns some co-relation
                         sol = Disease.query.filter_by(name=cl[0]).first()
+                        print sol.name
                         if sol is not None: # if the identified disease is in the system 
+                            print 'Now checking if category is secondary'
                             if sol.category == 'Secondary': # if the disease in question is a critical one 
+                                print 'determined as critical'
                                 ques = Critical(content=body, number=phone)
                                 db.session.add(ques)
                                 db.session.commit()
@@ -1212,6 +1218,7 @@ def sms_survey():
                                 response.message("An expert is looking into your issue and will contact you shortly")
                                 return str(response) # sends an sms to the farmer informing them that an expert will get back to them 
                             else: # if the disease is not critical 
+                                print 'remedy will be sent as a text'
                                 text = sol.remedy
                                 response.message(text)
                                 ques = Question(content=body, response=text, number=phone)
@@ -1219,6 +1226,7 @@ def sms_survey():
                                 db.session.commit()
                                 return str(response) # sends an sms to the farmer with the remedy
                         else: # if the identified disease is not in the system yet
+                            print 'something happened is sol none'
                             response.message('An expert will get back to you with the answer')
                             ques = Question(content=body, response='An expert will get back to you with the answer', number=phone)
                             db.session.add(ques)
@@ -1244,6 +1252,7 @@ def sms_survey():
                         return str(response)
                     else:
                         sol = Disease.query.filter_by(name=cl[0]).first()
+                        print sol.name
                         if sol is not None:
                             if sol.category == 'Secondary':
                                 ques = Critical(content=body, number=phone)
