@@ -1195,7 +1195,7 @@ def sms_survey():
                 response.message('{} you have been added successfully!'.format(farmer.name))
                 return str(response)
             else: # if the message is not a request but something else
-            print 'Starting classification now.........'
+                print 'Starting classification now.........'
                 classification = symptomClassifier.classify(result)
                 print 'classification done ..'
                 for cl in classification[:1]:
