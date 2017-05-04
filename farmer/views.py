@@ -1153,7 +1153,7 @@ symptomSet =[
     { "name":"Caseous lymphadenitis", "symptoms":"Sheep losing a lot of blood and has high temperature" }
 ]
 for symptom in symptomSet:
-    symptomTrainer.train("symptom['symptoms']", symptom['name'])
+    symptomTrainer.train(symptom['symptoms'], symptom['name'])
 
 # When you have sufficient trained data, you are almost done and can start to use
 # a classifier.
