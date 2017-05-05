@@ -1203,10 +1203,18 @@ def sms_survey():
                 print 'classification done ..'
                 for cl in classification[:1]:
                     print cl
-                    test = Farmer.query.filter_by(number=phone).first()
-                    if test is None: # if a registered user asks a question does not have anything to do with what the system does
-                        response.message("please send REGISTER, YOUR NAME and LOCATION to this number")
-                        return str(response) # sends an sms to the user with registration instructions
+                    if cl[1] == 0:
+                        print 'input has no corelation now checking if member'
+                        test = Farmer.query.filter_by(number=phone).first()
+                        if test is not None: # if a registered user asks a question does not have anything to do with what the system does
+                            response.message("Please ask questions that relate to livestock")
+                            fail_new = Question(content=body, response='Please ask questions that relate to livestock', number=phone)
+                            db.session.add(fail_new)
+                            db.session.commit()
+                            return str(response)
+                        else:
+                            response.message("please send REGISTER, YOUR NAME and LOCATION to this number")
+                            return str(response) # sends an sms to the user with registration instructions
                     else: # if the classification returns some co-relation
                         sol = Disease.query.filter_by(name=cl[0]).first()
                         print sol.name
