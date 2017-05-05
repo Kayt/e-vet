@@ -8,7 +8,7 @@ from textblob import TextBlob
 
 from . import app, basic_auth, db, login_manager
 from .forms import AddDiseaseForm, LoginForm, SignupForm, EditForm, EditDiseaseForm, AddUserForm, AnswerForm
-from .models import Disease, Farmer, Question, User
+from .models import Disease, Farmer, Question, User, Critical
 from .naiveBayesClassifier.classifier import Classifier
 from .naiveBayesClassifier.tokenizer import Tokenizer
 from .naiveBayesClassifier.trainer import Trainer
