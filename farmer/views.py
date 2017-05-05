@@ -1257,10 +1257,18 @@ def sms_survey():
             else:
                 classification = symptomClassifier.classify(result)
                 for cl in classification[:1]:
-                    test = Farmer.query.filter_by(number=phone).first()
-                    if test is None:
-                        response.message("tumirai REGISTER, ZITA RENYU, KWAMUNOGARA kutu mujoiniswe musystem. Tatenda.")
-                        return str(response)
+                    if cl[1] == 0:
+                        print 'input has no corelation now checking if member'
+                        test = Farmer.query.filter_by(number=phone).first()
+                        if test is not None: # if a registered user asks a question does not have anything to do with what the system does
+                            response.message("Bvunzai mibvunzo inoenderana nezvipfuyo")
+                            fail_new = Question(content=body, response='Bvunzai mibvunzo inoenderana nezvipfuyo', number=phone)
+                            db.session.add(fail_new)
+                            db.session.commit()
+                            return str(response)
+                        else:
+                            response.message("tumirai REGISTER, ZITA RENYU, KWAMUNOGARA kutu mujoiniswe musystem. Tatenda.")
+                            return str(response)
                     else:
                         sol = Disease.query.filter_by(name=cl[0]).first()
                         print sol.name
