@@ -15,6 +15,7 @@ class AddUserForm(FlaskForm):
 	password = PasswordField('Password', validators=[DataRequired(),EqualTo('password2', message='Passwords must match.')])
 	password2 = PasswordField('Confirm Password', validators=[DataRequired()])
 	email = StringField('Email', validators=[DataRequired(), Length(1, 120), Email()])
+	phone = StringField('Phone', validators=[DataRequired()])
 
 class EditDiseaseForm(FlaskForm):
 	name = StringField('name')

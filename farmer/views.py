@@ -10,7 +10,7 @@ from textblob import TextBlob
 
 from . import app, basic_auth, db, login_manager
 from .forms import AddDiseaseForm, LoginForm, SignupForm, EditForm, EditDiseaseForm, AddUserForm, AnswerForm, SendSMSForm
-from .models import Disease, Farmer, Question, User, Critical
+from .models import Disease, Farmer, Question, User, Critical, Unknown
 from .naiveBayesClassifier.classifier import Classifier
 from .naiveBayesClassifier.tokenizer import Tokenizer
 from .naiveBayesClassifier.trainer import Trainer
@@ -1215,7 +1215,7 @@ def sms_survey():
                         test = Farmer.query.filter_by(number=phone).first()
                         if test is not None: # if a registered user asks a question does not have anything to do with what the system does
                             response.message("Please ask questions that relate to livestock")
-                            fail_new = Question(content=body, response='Please ask questions that relate to livestock', number=phone)
+                            fail_new = Unknown(content=body, number=phone)
                             db.session.add(fail_new)
                             db.session.commit()
                             return str(response)
@@ -1269,7 +1269,7 @@ def sms_survey():
                         test = Farmer.query.filter_by(number=phone).first()
                         if test is not None: # if a registered user asks a question does not have anything to do with what the system does
                             response.message("Bvunzai mibvunzo inoenderana nezvipfuyo")
-                            fail_new = Question(content=body, response='Bvunzai mibvunzo inoenderana nezvipfuyo', number=phone)
+                            fail_new = Unknown(content=body, number=phone)
                             db.session.add(fail_new)
                             db.session.commit()
                             return str(response)
@@ -1391,28 +1391,6 @@ def diseases():
     diseases = Disease.query.all()
     return render_template('diseases.html', diseases=diseases, reginal=reginal)
 
-@app.route('/<name>', methods=["GET","POST"])
-@login_required
-def disease(name):
-    reginal = Farmer.query.filter_by(location=current_user.region)
-    form = EditDiseaseForm()
-    dis = Disease.query.filter_by(name=name).first()
-    if form.validate_on_submit():
-        dis.name = form.name.data
-        dis.category = form.category.data
-        dis.symptoms = form.symptoms.data
-        dis.remedy = form.remedy.data
-        dis.shona_remedy = form.shona_remedy.data
-        db.session.add(dis)
-        db.session.commit()
-        flash('Changes were made successfully!!')
-        return redirect(url_for('diseases'))
-    form.name.data = dis.name
-    form.category.data = dis.category
-    form.symptoms.data = dis.symptoms
-    form.remedy.data = dis.remedy
-    form.shona_remedy.data = dis.shona_remedy
-    return render_template('disease.html', form=form, reginal=reginal, dis=dis)
 
 @app.route('/admin')
 @basic_auth.required
@@ -1426,7 +1404,8 @@ def addUser():
     if form.validate_on_submit():
         user = User(email=form.email.data,
                     username=form.username.data,
-                    password = form.password.data)
+                    password = form.password.data,
+                    phone=form.phone.data)
         db.session.add(user)
         db.session.commit()
         flash('{}! Has been added as an expert'.format(user.username))
@@ -1442,7 +1421,7 @@ def logs():
 def delete(id):
     User.query.filter_by(id=id).delete()
     db.session.commit()
-    return redirect('dashboard')
+    return redirect('admin')
 
 @app.route('/responses')
 def responses():
@@ -1518,7 +1497,31 @@ def replyCrit(id):
         return redirect(url_for('responses'))
     return render_template('replyCritical.html', que=que, form=form, reginal=reginal)
         
-    
+@app.route('/disease/<name>', methods=["GET","POST"])
+@login_required
+def disease(name):
+    reginal = Farmer.query.filter_by(location=current_user.region)
+    form = EditDiseaseForm()
+    dis = Disease.query.filter_by(name=name).first()
+    if dis is not None:
+        if form.validate_on_submit():
+            dis.name = form.name.data
+            dis.category = form.category.data
+            dis.symptoms = form.symptoms.data
+            dis.remedy = form.remedy.data
+            dis.shona_remedy = form.shona_remedy.data
+            db.session.add(dis)
+            db.session.commit()
+            flash('Changes were made successfully!!')
+            return redirect(url_for('diseases'))
+        form.name.data = dis.name
+        form.category.data = dis.category
+        form.symptoms.data = dis.symptoms
+        form.remedy.data = dis.remedy
+        form.shona_remedy.data = dis.shona_remedy
+        return render_template('disease.html', form=form, reginal=reginal, dis=dis)
+    flash('Disease not found Please add ')
+    return redirect(url_for('addDiesease'))   
 
     
     

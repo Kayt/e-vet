@@ -75,6 +75,20 @@
                             {% endfor %}
                         {% endif %}
                     </ul>
+                    <h3>Attention!!!</h3>
+                    <ul>
+                        {% if reginal.count() == 0 %}
+                            <i>No funny requests from your Region</i>
+                        {% else %}
+                            {% for farmer in reginal %}
+                                {% for request in farmer.unknown_requests %}
+                                    {% if request.seen == False %}
+                                        <li>{{ request.name }}: <b><a href="{{ url_for('replyCrit', id=request.id ) }}">{{ request.content }}</a><li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
                 {% else %}
                     <i>All important and urgent requests will be shown here once you log in!</i>
                 {% endif %}
