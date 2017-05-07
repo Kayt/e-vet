@@ -49,7 +49,7 @@
                     {% endwith %}
                 </article>
 
-                <section>
+                <article>
 					<h1 style="clear:both">Please login</h1>
 						<form action="" method="post">
 							{{ form.hidden_tag() }}
@@ -59,7 +59,13 @@
 								{{ render_field(form.remember_me) }}
 								{{ render_field(form.submit) }}
 							</table>
-				</section>
+				</article>
+
+                <aside>
+                    <article class="main">
+                        <img src="{{ url_for('static', filename='img/footer.png')}}">
+                    </article>
+                </aside>
 
             </div> <!-- #main -->
         </div> <!-- #main-container -->
