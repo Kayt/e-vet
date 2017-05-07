@@ -1176,6 +1176,13 @@ translate_client = translate.Client()
 def load_user(userid):
 	return User.query.get(int(userid))
 
+def send_expert_sms(phone):
+    farmer = Farmer.query.filter_by(number=phone).first()
+    vet = User.query.filter_by(region=str(farmer.location)).first()
+    number = vet.number
+    sms_body = "Attention! A Critical message has been sent into the system!!"
+    send_sms(sms_body, number)
+
 @app.route('/message', methods=['GET','POST'])
 def sms_survey():
     response = twilio.twiml.Response()
@@ -1215,6 +1222,7 @@ def sms_survey():
                         test = Farmer.query.filter_by(number=phone).first()
                         if test is not None: # if a registered user asks a question does not have anything to do with what the system does
                             response.message("Please ask questions that relate to livestock")
+                            send_expert_sms(phone)
                             fail_new = Unknown(content=body, number=phone)
                             db.session.add(fail_new)
                             db.session.commit()
@@ -1229,6 +1237,7 @@ def sms_survey():
                             print 'Now checking if category is secondary'
                             if sol.category == 'Secondary': # if the disease in question is a critical one 
                                 print 'determined as critical'
+                                send_expert_sms(phone)
                                 ques = Critical(content=body, number=phone)
                                 db.session.add(ques)
                                 db.session.commit()
@@ -1269,6 +1278,7 @@ def sms_survey():
                         test = Farmer.query.filter_by(number=phone).first()
                         if test is not None: # if a registered user asks a question does not have anything to do with what the system does
                             response.message("Bvunzai mibvunzo inoenderana nezvipfuyo")
+                            send_expert_sms(phone)
                             fail_new = Unknown(content=body, number=phone)
                             db.session.add(fail_new)
                             db.session.commit()
@@ -1281,6 +1291,7 @@ def sms_survey():
                         print sol.name
                         if sol is not None:
                             if sol.category == 'Secondary':
+                                send_expert_sms(phone)
                                 ques = Critical(content=body, number=phone)
                                 db.session.add(ques)
                                 db.session.commit()
