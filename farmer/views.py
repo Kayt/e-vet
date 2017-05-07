@@ -1386,6 +1386,7 @@ def profile(id):
         user.username = form.username.data
         user.email = form.email.data
         user.region = form.region.data
+        user.phone = form.phone.data
         db.session.add(user)
         db.session.commit()
         flash('Changes were made successfully!!')
@@ -1393,6 +1394,7 @@ def profile(id):
     form.username.data = user.username
     form.email.data = user.email
     form.region.data = user.region
+    form.phone.data = user.phone
     return render_template('profile.html', form=form, reginal=reginal)
 
 @app.route('/diseases')

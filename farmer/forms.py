@@ -28,6 +28,7 @@ class EditForm(FlaskForm):
 	username = StringField('Your Username: ')
 	email = StringField('Your e-mail: ')
 	region= StringField('Your Region: ')
+	phone = StringField('Your Phone')
 
 class AddDiseaseForm(FlaskForm):
 	name = StringField('name', validators=[DataRequired()])
