@@ -68,7 +68,9 @@
                         {% else %}
                             {% for farmer in reginal %}
                                 {% for request in farmer.critical_requests %}
-                                    <li>{{ request.name }}: <b><a href="#">{{ request.content }}</a><li>
+                                    {% if request.seen == False %}
+                                        <li>{{ request.name }}: <b><a href="{{ url_for('replyCrit', id=request.id ) }}">{{ request.content }}</a><li>
+                                    {% endif %}
                                 {% endfor %}
                             {% endfor %}
                         {% endif %}

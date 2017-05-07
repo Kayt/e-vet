@@ -1500,6 +1500,23 @@ def reply(id):
         flash('message sent')
         return redirect(url_for('responses'))
     return render_template('reply.html', que=que, form=form, reginal=reginal)
+
+@app.route('/reply_critical/<id>', methods=["GET","POST"])
+@login_required
+def replyCrit(id):
+    que = Critical.query.get(id)
+    reginal = Farmer.query.filter_by(location=current_user.region)
+    number=que.number
+    form = SendSMSForm()
+    if form.validate_on_submit():
+        sms_body = form.body.data
+        send_sms(sms_body, number)
+        que.seen = True
+        db.session.add(que)
+        db.session.commit()
+        flash('message sent')
+        return redirect(url_for('responses'))
+    return render_template('replyCritical.html', que=que, form=form, reginal=reginal)
         
     
 

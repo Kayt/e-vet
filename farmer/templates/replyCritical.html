@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "form_macros.html" import render_field %}
+
+{% block title %}
+E-Vet -- Add Disease
+{% endblock %}
+
+{% block content %}
+<article>
+<h3>Respond to Farmer</h3>
+
+<p>Question: {{ que.content }}</p>
+<p>Asked by: {{ que.name }}
+<form action="{{ url_for('replyCrit', id=que.id )}}" method="post" name="reply">
+    {{ form.hidden_tag() }}
+    <table>
+        {{ render_field(form.body) }}
+        
+        <tr class="submit">
+            <td></td>
+            <td><button type="submit">Reply</button></td>
+        </tr>               
+    </table>
+</form>
+</article>
+{% endblock %}
