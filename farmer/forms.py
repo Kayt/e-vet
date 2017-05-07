@@ -4,6 +4,9 @@ from wtforms.validators import DataRequired, url, Length, Email, Regexp, EqualTo
 
 from models import User
 
+class SendSMSForm(FlaskForm):
+    body = TextAreaField('sms body', validators=[DataRequired()])
+
 class AnswerForm(FlaskForm):
     answer = TextAreaField('Enter Response', validators=[DataRequired()])
 
@@ -37,7 +40,7 @@ class LoginForm(FlaskForm):
     username = StringField('Your Username: ', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
     remember_me = BooleanField("Keep me logged in")
-    submit = SubmitField('Log In')
+    submit = SubmitField()
 
 class SignupForm(FlaskForm):
 	username = StringField('Username',

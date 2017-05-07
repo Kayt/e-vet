@@ -3,15 +3,22 @@ from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import desc
 
 import twilio.twiml
+from twilio.rest import TwilioRestClient
+
 from google.cloud import translate
 from textblob import TextBlob
 
 from . import app, basic_auth, db, login_manager
-from .forms import AddDiseaseForm, LoginForm, SignupForm, EditForm, EditDiseaseForm, AddUserForm, AnswerForm
+from .forms import AddDiseaseForm, LoginForm, SignupForm, EditForm, EditDiseaseForm, AddUserForm, AnswerForm, SendSMSForm
 from .models import Disease, Farmer, Question, User, Critical
 from .naiveBayesClassifier.classifier import Classifier
 from .naiveBayesClassifier.tokenizer import Tokenizer
 from .naiveBayesClassifier.trainer import Trainer
+
+ACCOUNT_SID = "AC2f2a61f5b58d2b93d3fbd3552378a56e" 
+AUTH_TOKEN = "cb484cb85d45a5b251a2ac80e728b461" 
+
+client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
 
 token = Tokenizer()
 
@@ -1472,6 +1479,29 @@ def adminDisease(name):
     form.remedy.data = dis.remedy
     form.shona_remedy.data = dis.shona_remedy
     return render_template('adminDisease.html', form=form, dis=dis)
+
+def send_sms(sms_body, number):
+    client.messages.create(
+        to=number,
+        from_="+13476094085",
+        body=sms_body
+    )
+
+@app.route('/reply_farmer/<id>', methods=["GET","POST"])
+@login_required
+def reply(id):
+    que = Question.query.get(id)
+    reginal = Farmer.query.filter_by(location=current_user.region)
+    number=que.number
+    form = SendSMSForm()
+    if form.validate_on_submit():
+        sms_body = form.body.data
+        send_sms(sms_body, number)
+        flash('message sent')
+        return redirect(url_for('responses'))
+    return render_template('reply.html', que=que, form=form, reginal=reginal)
+        
+    
 
     
     

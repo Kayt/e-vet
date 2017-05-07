@@ -6,6 +6,7 @@ E-Vet -- Add Disease
 {% endblock %}
 
 {% block content %}
+<article>
 <form action="" method="post" name="add">
     {{ form.hidden_tag() }}
     <table>
@@ -17,4 +18,5 @@ E-Vet -- Add Disease
         {{ render_field(form.submit) }}
     </table>
 </form>
+</article>
 {% endblock %}

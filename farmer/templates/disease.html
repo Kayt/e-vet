@@ -6,7 +6,7 @@ E-Vet-- Disease
 {% endblock %}
 
 {% block content %}
-	<section>
+	<article>
 		<h1 style="clear: both">{{ dis.name}}</h1>
 		<form action="{{ url_for('disease', name=dis.name) }}" method="post" name="profile">
 			{{ form.hidden_tag() }}
@@ -23,7 +23,7 @@ E-Vet-- Disease
 				</tr>
 			</table>
 		</form>
-	</section>
+	</article>
 {% endblock %}
 
 {% block sidebar %}

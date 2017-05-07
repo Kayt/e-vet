@@ -6,7 +6,7 @@ E-Vet-- Profile
 {% endblock %}
 
 {% block content %}
-	<section>
+	<article>
 		<h1 style="clear: both">View and Edit Your Profile</h1>
 		<form action="{{ url_for('profile', id=current_user.id) }}" method="post" name="profile">
 			{{ form.hidden_tag() }}
@@ -21,7 +21,7 @@ E-Vet-- Profile
 				</tr>
 			</table>
 		</form>
-	</section>
+	</article>
 {% endblock %}
 
 {% block sidebar %}

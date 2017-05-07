@@ -57,12 +57,16 @@
 								{{ render_field(form.username, size=50) }}
 								{{ render_field(form.password, size=50) }}
 								{{ render_field(form.remember_me) }}
-								{{ render_field(form.submit) }}
+								
+                                <tr class="submit">
+                                    <td></td>
+                                    <td><button type="submit">Log In</button></td>
+                                </tr>
 							</table>
 				</article>
 
-                <aside>
-                    <article class="main">
+                <aside >
+                    <article class="main" style="float:left; padding-left:0px;" >
                         <img src="{{ url_for('static', filename='img/footer.png')}}">
                     </article>
                 </aside>
