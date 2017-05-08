@@ -1525,7 +1525,7 @@ def replyUnknown(id):
         db.session.commit()
         flash('message sent')
         return redirect(url_for('responses'))
-    return render_template('replyCritical.html', que=que, form=form, reginal=reginal)
+    return render_template('replyUnknown.html', que=que, form=form, reginal=reginal)
         
 @app.route('/disease/<name>', methods=["GET","POST"])
 @login_required
