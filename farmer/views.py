@@ -1179,7 +1179,7 @@ def load_user(userid):
 def send_expert_sms(phone):
     farmer = Farmer.query.filter_by(number=phone).first()
     vet = User.query.filter_by(region=str(farmer.location)).first()
-    number = vet.number
+    number = vet.phone
     sms_body = "Attention! A Critical message has been sent into the system!!"
     send_sms(sms_body, number)
 
