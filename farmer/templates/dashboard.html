@@ -63,12 +63,14 @@
                         <tr>
                             <th>Username </th>
                             <th>email</th>
+                            <th>phone</th>
                             <th></th>
                         </tr>
                         {% for user in users %}
                             <tr>
                                 <td>{{ user.username }}</td>
                                 <td>{{ user.email }}</td>
+                                <td>{{ user.phone }}</td>
                                 <td><a href="{{ url_for('delete', id=user.id) }}">Remove expert</a></td>
                             </tr>
                         {% endfor %}
