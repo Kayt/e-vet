@@ -83,7 +83,7 @@
                             {% for farmer in reginal %}
                                 {% for request in farmer.unknown_requests %}
                                     {% if request.seen == False %}
-                                        <li>{{ request.name }}: <b><a href="{{ url_for('replyCrit', id=request.id ) }}">{{ request.content }}</a><li>
+                                        <li>{{ request.name }}: <b><a href="{{ url_for('replyUnknown', id=request.id ) }}">{{ request.content }}</a><li>
                                     {% endif %}
                                 {% endfor %}
                             {% endfor %}
