@@ -15,8 +15,8 @@ from .naiveBayesClassifier.classifier import Classifier
 from .naiveBayesClassifier.tokenizer import Tokenizer
 from .naiveBayesClassifier.trainer import Trainer
 
-ACCOUNT_SID = "AC2f2a61f5b58d2b93d3fbd3552378a56e" 
-AUTH_TOKEN = "cb484cb85d45a5b251a2ac80e728b461" 
+ACCOUNT_SID = "ACf565f3e69e3f94613cd65677cce4c2af" 
+AUTH_TOKEN = "5a61107224d82fdc666e7187c8a06a8e" 
 
 client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
 
@@ -1325,6 +1325,13 @@ translate_client = translate.Client()
 def load_user(userid):
 	return User.query.get(int(userid))
 
+def send_sms(sms_body, number):
+    client.messages.create(
+        to=number,
+        from_="+17173820755",
+        body=sms_body
+    )
+
 def send_expert_sms(phone):
     farmer = Farmer.query.filter_by(number=phone).first()
     vet = User.query.filter_by(region=str(farmer.location)).first()
@@ -1628,12 +1635,7 @@ def adminDisease(name):
     form.shona_remedy.data = dis.shona_remedy
     return render_template('adminDisease.html', form=form, dis=dis)
 
-def send_sms(sms_body, number):
-    client.messages.create(
-        to=number,
-        from_="+13476094085",
-        body=sms_body
-    )
+
 
 @app.route('/reply_farmer/<id>', methods=["GET","POST"])
 @login_required
