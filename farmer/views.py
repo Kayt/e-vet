@@ -1472,7 +1472,8 @@ def sms_survey():
                                 db.session.commit()
                                 return str(response)
         else:
-            response.message("tumirai REGISTER, ZITA RENYU, KWAMUNOGARA kutu mujoiniswe musystem. Tatenda.")
+            print 'unregistered number detected'
+            response.message("tumirai REGISTER, zita renyu, kwamunogara ,dunhu renyu ,kuti mupinde muchirogwa ichi ,,,Tatenda.")
             return str(response)
 
     response.message('Please specify the symptoms that you are seeing')
