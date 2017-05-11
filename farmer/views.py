@@ -1349,119 +1349,124 @@ def sms_survey():
 
         # even if the user asks in english the system will still translate to shona so inorder to check if the system is dealing with english or shona we have to put it through a condition
         # so we will compare the text i.e the message against the translation result
-        
-        if text == result:
-            # English text was provided so we will start processing english text
-            if 'register' in result.lower():
-                new = result.split(' ')
-                farmer = Farmer(number=phone, name=new[1], surname=new[2], location=" ".join(new[3:]))
-                db.session.add(farmer)
-                db.session.commit()
-                response.message('{} you have been added successfully!'.format(farmer.name))
-                return str(response)
-            else: # if the message is not a request but something else
-                print 'Starting classification now.........'
-                print 'the classifier will classify the following text'
-                print result
-                print 'procedding with classification'
-                classification = symptomClassifier.classify(result)
-                print 'classification done ..'
-                for cl in classification[:1]:
-                    print cl
-                    if cl[1] == 0:
-                        print 'input has no corelation now checking if member'
-                        test = Farmer.query.filter_by(number=phone).first()
-                        if test is not None: # if a registered user asks a question does not have anything to do with what the system does
-                            response.message("Please ask questions that relate to livestock")
-                            send_expert_sms(phone)
-                            fail_new = Unknown(content=body, number=phone)
-                            db.session.add(fail_new)
-                            db.session.commit()
-                            return str(response)
-                        else:
-                            response.message("please send REGISTER, YOUR NAME and LOCATION to this number")
-                            return str(response) # sends an sms to the user with registration instructions
-                    else: # if the classification returns some co-relation
-                        sol = Disease.query.filter_by(name=cl[0]).first()
-                        print sol.name
-                        if sol is not None: # if the identified disease is in the system 
-                            print 'Now checking if category is secondary'
-                            if sol.category == 'Secondary': # if the disease in question is a critical one 
-                                print 'determined as critical'
+        person = Farmer.query.filter_by(number=phone).first()
+        if person is not None:
+            print 'Registered farmer has sent a message'
+            if text == result:
+                # English text was provided so we will start processing english text
+                if 'register' in result.lower():
+                    new = result.split(' ')
+                    farmer = Farmer(number=phone, name=new[1], surname=new[2], location=" ".join(new[3:]))
+                    db.session.add(farmer)
+                    db.session.commit()
+                    response.message('{} you have been added successfully!'.format(farmer.name))
+                    return str(response)
+                else: # if the message is not a request but something else
+                    print 'Starting classification now.........'
+                    print 'the classifier will classify the following text'
+                    print result
+                    print 'procedding with classification'
+                    classification = symptomClassifier.classify(result)
+                    print 'classification done ..'
+                    for cl in classification[:1]:
+                        print cl
+                        if cl[1] == 0:
+                            print 'input has no corelation now checking if member'
+                            test = Farmer.query.filter_by(number=phone).first()
+                            if test is not None: # if a registered user asks a question does not have anything to do with what the system does
+                                response.message("Please ask questions that relate to livestock")
                                 send_expert_sms(phone)
-                                ques = Critical(content=body, number=phone)
-                                db.session.add(ques)
+                                fail_new = Unknown(content=body, number=phone)
+                                db.session.add(fail_new)
                                 db.session.commit()
-                                flash('A critical Question was asked You need to respond urgently')
-                                response.message("An expert is looking into your issue and will contact you shortly")
-                                return str(response) # sends an sms to the farmer informing them that an expert will get back to them 
-                            else: # if the disease is not critical 
-                                print 'remedy will be sent as a text'
-                                text = sol.remedy
-                                response.message(text)
-                                ques = Question(content=body, response=text, number=phone)
-                                db.session.add(ques)
-                                db.session.commit()
-                                return str(response) # sends an sms to the farmer with the remedy
-                        else: # if the identified disease is not in the system yet
-                            print 'something happened is sol none'
-                            response.message('An expert will get back to you with the answer')
-                            ques = Question(content=body, response='An expert will get back to you with the answer', number=phone)
-                            db.session.add(ques)
-                            db.session.commit()
-                            return str(response) # sends an sms to the farmer informing them that an expert will contact them
-                
-        else:
-            # Shona or some other language was provided so we will start processing shona text
-
-            if 'register' in result.lower():
-                new = result.split(' ')
-                farmer = Farmer(number=phone, name=new[1], surname=new[2], location=" ".join(new[3:]))
-                db.session.add(farmer)
-                db.session.commit()
-                response.message('{}, registration yako yabudirira!'.format(farmer.name))
-                return str(response)
-            else:
-                classification = symptomClassifier.classify(result)
-                for cl in classification[:1]:
-                    if cl[1] == 0:
-                        print 'input has no corelation now checking if member'
-                        test = Farmer.query.filter_by(number=phone).first()
-                        if test is not None: # if a registered user asks a question does not have anything to do with what the system does
-                            response.message("Bvunzai mibvunzo inoenderana nezvipfuyo")
-                            send_expert_sms(phone)
-                            fail_new = Unknown(content=body, number=phone)
-                            db.session.add(fail_new)
-                            db.session.commit()
-                            return str(response)
-                        else:
-                            response.message("tumirai REGISTER, ZITA RENYU, KWAMUNOGARA kutu mujoiniswe musystem. Tatenda.")
-                            return str(response)
-                    else:
-                        sol = Disease.query.filter_by(name=cl[0]).first()
-                        print sol.name
-                        if sol is not None:
-                            if sol.category == 'Secondary':
-                                send_expert_sms(phone)
-                                ques = Critical(content=body, number=phone)
-                                db.session.add(ques)
-                                db.session.commit()
-                                flash('A critical Question was asked You need to respond urgently')
-                                response.message("Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro")
                                 return str(response)
                             else:
-                                text = sol.shona_remedy
-                                response.message(text)
-                                ques = Question(content=body, response=text, number=phone)
+                                response.message("please send REGISTER, YOUR NAME and LOCATION to this number")
+                                return str(response) # sends an sms to the user with registration instructions
+                        else: # if the classification returns some co-relation
+                            sol = Disease.query.filter_by(name=cl[0]).first()
+                            print sol.name
+                            if sol is not None: # if the identified disease is in the system 
+                                print 'Now checking if category is secondary'
+                                if sol.category == 'Secondary': # if the disease in question is a critical one 
+                                    print 'determined as critical'
+                                    send_expert_sms(phone)
+                                    ques = Critical(content=body, number=phone)
+                                    db.session.add(ques)
+                                    db.session.commit()
+                                    flash('A critical Question was asked You need to respond urgently')
+                                    response.message("An expert is looking into your issue and will contact you shortly")
+                                    return str(response) # sends an sms to the farmer informing them that an expert will get back to them 
+                                else: # if the disease is not critical 
+                                    print 'remedy will be sent as a text'
+                                    text = sol.remedy
+                                    response.message(text)
+                                    ques = Question(content=body, response=text, number=phone)
+                                    db.session.add(ques)
+                                    db.session.commit()
+                                    return str(response) # sends an sms to the farmer with the remedy
+                            else: # if the identified disease is not in the system yet
+                                print 'something happened is sol none'
+                                response.message('An expert will get back to you with the answer')
+                                ques = Question(content=body, response='An expert will get back to you with the answer', number=phone)
+                                db.session.add(ques)
+                                db.session.commit()
+                                return str(response) # sends an sms to the farmer informing them that an expert will contact them
+                    
+            else:
+                # Shona or some other language was provided so we will start processing shona text
+
+                if 'register' in result.lower():
+                    new = result.split(' ')
+                    farmer = Farmer(number=phone, name=new[1], surname=new[2], location=" ".join(new[3:]))
+                    db.session.add(farmer)
+                    db.session.commit()
+                    response.message('{}, registration yako yabudirira!'.format(farmer.name))
+                    return str(response)
+                else:
+                    classification = symptomClassifier.classify(result)
+                    for cl in classification[:1]:
+                        if cl[1] == 0:
+                            print 'input has no corelation now checking if member'
+                            test = Farmer.query.filter_by(number=phone).first()
+                            if test is not None: # if a registered user asks a question does not have anything to do with what the system does
+                                response.message("Bvunzai mibvunzo inoenderana nezvipfuyo")
+                                send_expert_sms(phone)
+                                fail_new = Unknown(content=body, number=phone)
+                                db.session.add(fail_new)
+                                db.session.commit()
+                                return str(response)
+                            else:
+                                response.message("tumirai REGISTER, ZITA RENYU, KWAMUNOGARA kutu mujoiniswe musystem. Tatenda.")
+                                return str(response)
+                        else:
+                            sol = Disease.query.filter_by(name=cl[0]).first()
+                            print sol.name
+                            if sol is not None:
+                                if sol.category == 'Secondary':
+                                    send_expert_sms(phone)
+                                    ques = Critical(content=body, number=phone)
+                                    db.session.add(ques)
+                                    db.session.commit()
+                                    flash('A critical Question was asked You need to respond urgently')
+                                    response.message("Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro")
+                                    return str(response)
+                                else:
+                                    text = sol.shona_remedy
+                                    response.message(text)
+                                    ques = Question(content=body, response=text, number=phone)
+                                    db.session.add(ques)
+                                    db.session.commit()
+                                    return str(response)
+                            else:
+                                response.message('Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro')
+                                ques = Question(content=body, response='Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro', number=phone)
                                 db.session.add(ques)
                                 db.session.commit()
                                 return str(response)
-                        else:
-                            response.message('Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro')
-                            ques = Question(content=body, response='Nyanzvi wemhuka mukuru vachadzoka kwamuri nemhinduro', number=phone)
-                            db.session.add(ques)
-                            db.session.commit()
-                            return str(response)
+        else:
+            response.message("tumirai REGISTER, ZITA RENYU, KWAMUNOGARA kutu mujoiniswe musystem. Tatenda.")
+            return str(response)
 
     response.message('Please specify the symptoms that you are seeing')
 
@@ -1472,7 +1477,7 @@ def sms_survey():
 @app.route('/index')
 @login_required
 def index():
-    requests = Question.query.order_by(desc(Question.id)).limit(20)
+    requests = Question.query.order_by(desc(Question.id))
     reginal = Farmer.query.filter_by(location=current_user.region)
     return render_template('index.html', requests=requests, reginal=reginal)
 

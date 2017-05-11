@@ -1161,5 +1161,5 @@ classification = newsClassifier.classify("Small cattle are able to eat and drink
 
 
 # the classification variable holds the detected categories sorted
-for cl in classification[:1]:
+for cl in classification:
     print cl
