@@ -3320,7 +3320,7 @@ newsClassifier = Classifier(newsTrainer.data, token)
 
 # Now you have a classifier which can give a try to classifiy text of news whose
 # category is unknown, yet.
-classification = newsClassifier.classify("The chickens are my diet and lost weight")
+classification = newsClassifier.classify("Good day ladies and gentlemen")
 
 
 

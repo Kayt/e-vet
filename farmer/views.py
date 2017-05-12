@@ -3484,8 +3484,17 @@ def sms_survey():
                                 return str(response)
         else:
             print 'unregistered number detected'
-            response.message("tumirai REGISTER, zita renyu, kwamunogara ,dunhu renyu ,kuti mupinde muchirogwa ichi ,,,Tatenda.")
-            return str(response)
+            if 'register' in result.lower():
+                print 'begining registration'
+                new = result.split(' ')
+                farmer = Farmer(number=phone, name=new[1], surname=new[2], location=" ".join(new[3:]))
+                db.session.add(farmer)
+                db.session.commit()
+                response.message('{}, registration yako yabudirira!'.format(farmer.name))
+                return str(response)
+            else:
+                response.message("tumirai REGISTER, zita renyu, kwamunogara ,dunhu renyu ,kuti mupinde muchirogwa ichi ,,,Tatenda.")
+                return str(response)
 
     response.message('Please specify the symptoms that you are seeing')
 
