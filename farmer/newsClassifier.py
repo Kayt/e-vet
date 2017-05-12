@@ -3,6 +3,9 @@ Suppose you have some texts of news and know their categories.
 You want to train a system with this pre-categorized/pre-classified 
 texts. So, you have better call this data your training set.
 """
+import nltk
+
+
 from naiveBayesClassifier.tokenizer import Tokenizer
 from naiveBayesClassifier.trainer import Trainer
 from naiveBayesClassifier.classifier import Classifier
@@ -3317,6 +3320,8 @@ for news in newsSet:
 # When you have sufficient trained data, you are almost done and can start to use
 # a classifier.
 newsClassifier = Classifier(newsTrainer.data, token)
+
+print newsClassifier.accuracy(newsSet)
 
 # Now you have a classifier which can give a try to classifiy text of news whose
 # category is unknown, yet.
