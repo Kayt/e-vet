@@ -24,7 +24,7 @@ linecache2==1.0.0
 lxml==3.4.0
 Mako==1.0.6
 MarkupSafe==0.23
-nltk==3.2.2
+nltk==3.4.5
 oauth2client==4.0.0
 packaging==16.8
 pbr==1.10.0
