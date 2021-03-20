@@ -19,7 +19,7 @@ googleapis-common-protos==1.5.2
 gunicorn==19.7.1
 httplib2==0.10.3
 itsdangerous==0.24
-Jinja2==2.9.5
+Jinja2==2.11.3
 linecache2==1.0.0
 lxml==3.4.0
 Mako==1.0.6
