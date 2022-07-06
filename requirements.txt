@@ -21,7 +21,7 @@ httplib2==0.10.3
 itsdangerous==0.24
 Jinja2==2.9.5
 linecache2==1.0.0
-lxml==3.4.0
+lxml==4.9.1
 Mako==1.0.6
 MarkupSafe==0.23
 nltk==3.2.2
