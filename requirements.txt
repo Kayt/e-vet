@@ -29,7 +29,7 @@ oauth2client==4.0.0
 packaging==16.8
 pbr==1.10.0
 phonenumbers==7.2.7
-protobuf==3.2.0
+protobuf==3.18.3
 psycopg2==2.7.1
 pyasn1==0.2.3
 pyasn1-modules==0.0.8
